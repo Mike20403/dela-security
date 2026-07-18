@@ -1,8 +1,8 @@
-## Plan: Security Dashboard Foundation First
+# Plan: Security Dashboard Foundation First
 
 Build foundation before feature UI. Single source for tokens, models, query keys, errors, mock repository, schemas, and provider configuration. Keep architecture scalable without speculative wrappers or unused infrastructure.
 
-**Phases 8**
+## Phases 8
 
 1. **Phase 1: Reproducible Project Baseline**
     - **Objective:** Establish pinned, repeatable React 18/Vite/Yarn toolchain.
@@ -116,14 +116,16 @@ Build foundation before feature UI. Single source for tokens, models, query keys
         6. Use web search only after repeated exact errors survive official documentation review.
         7. Add no stretch dependency unless core quality gates remain green.
 
-**Open Questions**
+## Open Questions
+
 1. Use Tailwind v4 CSS-first tokens? Approved default: yes.
 2. Use Yarn 4 with `node-modules` linker? Approved default: yes.
 3. Initialize Git repository during Phase 1? Approved default: yes.
 4. Include stretch goal D after core completion? Approved default: accessible keyboard basics only.
 5. Hardcoded current analyst name? Approved default: `Alex Morgan`.
 
-**Deliberate Deferrals**
+## Deliberate Deferrals
+
 - Axios: no HTTP backend exists; `AlertsRepository` provides replaceable boundary.
 - MSW: no HTTP requests exist to intercept.
 - Generic API client, CRUD framework, dependency-injection container, auth, token refresh, global event bus, and state library: no current requirement.

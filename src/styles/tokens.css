@@ -1,0 +1,93 @@
+@theme inline {
+  --color-surface-canvas: var(--app-color-surface-canvas);
+  --color-surface-container: var(--app-color-surface-container);
+  --color-surface-muted: var(--app-color-surface-muted);
+  --color-surface-elevated: var(--app-color-surface-elevated);
+  --color-text-primary: var(--app-color-text-primary);
+  --color-text-strong: var(--app-color-text-strong);
+  --color-text-secondary: var(--app-color-text-secondary);
+  --color-text-inverse: var(--app-color-text-inverse);
+  --color-text-disabled: var(--app-color-text-disabled);
+  --color-border-default: var(--app-color-border-default);
+  --color-border-subtle: var(--app-color-border-subtle);
+  --color-border-strong: var(--app-color-border-strong);
+  --color-focus-ring: var(--app-color-focus-ring);
+  --color-focus-offset: var(--app-color-focus-offset);
+  --color-action-primary: var(--app-color-action-primary);
+  --color-action-hover: var(--app-color-action-hover);
+  --color-action-subtle: var(--app-color-action-subtle);
+  --color-severity-critical: var(--app-color-severity-critical);
+  --color-severity-high: var(--app-color-severity-high);
+  --color-severity-medium: var(--app-color-severity-medium);
+  --color-severity-low: var(--app-color-severity-low);
+  --color-severity-surface-critical: var(--app-color-severity-surface-critical);
+  --color-severity-surface-high: var(--app-color-severity-surface-high);
+  --color-severity-surface-medium: var(--app-color-severity-surface-medium);
+  --color-severity-surface-low: var(--app-color-severity-surface-low);
+  --color-status-new: var(--app-color-status-new);
+  --color-status-investigating: var(--app-color-status-investigating);
+  --color-status-resolved: var(--app-color-status-resolved);
+  --color-status-dismissed: var(--app-color-status-dismissed);
+  --color-status-surface-new: var(--app-color-status-surface-new);
+  --color-status-surface-investigating: var(
+    --app-color-status-surface-investigating
+  );
+  --color-status-surface-resolved: var(--app-color-status-surface-resolved);
+  --color-status-surface-dismissed: var(--app-color-status-surface-dismissed);
+  --font-sans: var(--app-font-sans);
+  --font-mono: var(--app-font-mono);
+  --text-xs: var(--app-font-size-xs);
+  --text-sm: var(--app-font-size-sm);
+  --text-base: var(--app-font-size-base);
+  --text-lg: var(--app-font-size-lg);
+  --text-xl: var(--app-font-size-xl);
+  --font-weight-normal: var(--app-font-weight-normal);
+  --font-weight-medium: var(--app-font-weight-medium);
+  --font-weight-semibold: var(--app-font-weight-semibold);
+  --leading-normal: var(--app-line-height-normal);
+  --spacing-xs: var(--app-spacing-xs);
+  --spacing-sm: var(--app-spacing-sm);
+  --spacing-md: var(--app-spacing-md);
+  --spacing-lg: var(--app-spacing-lg);
+  --spacing-xl: var(--app-spacing-xl);
+  --radius-sm: var(--app-radius-sm);
+  --radius-md: var(--app-radius-md);
+  --radius-lg: var(--app-radius-lg);
+  --shadow-sm: var(--app-shadow-sm);
+  --shadow-md: var(--app-shadow-md);
+  --ease-standard: var(--app-motion-ease);
+
+  /* ponytail: media queries cannot resolve runtime var(); keep these synced by tests. */
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+}
+
+@utility duration-fast {
+  transition-duration: var(--app-motion-duration-fast);
+}
+
+@utility duration-normal {
+  transition-duration: var(--app-motion-duration-normal);
+}
+
+@utility outline-offset-app {
+  outline-offset: var(--app-focus-offset);
+}
+
+@utility min-w-breakpoint-sm {
+  min-width: var(--app-breakpoint-sm);
+}
+
+@utility min-w-breakpoint-md {
+  min-width: var(--app-breakpoint-md);
+}
+
+@utility min-w-breakpoint-lg {
+  min-width: var(--app-breakpoint-lg);
+}
+
+@utility min-w-breakpoint-xl {
+  min-width: var(--app-breakpoint-xl);
+}
