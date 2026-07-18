@@ -1,0 +1,29 @@
+{
+  "name": "dela-security",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "yarn@4.17.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b --pretty false",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "@types/react": "18.3.31",
+    "@types/react-dom": "18.3.7",
+    "@vitejs/plugin-react": "6.0.3",
+    "typescript": "5.9.3",
+    "vite": "8.1.5",
+    "vitest": "4.1.10"
+  }
+}
