@@ -136,5 +136,8 @@ describe('AlertsPage', () => {
     } as unknown as ReturnType<typeof useAlerts>)
     rerender(<AlertsPage />)
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(
+      screen.getByRole('heading', { name: 'Security alerts' }),
+    ).toHaveFocus()
   })
 })

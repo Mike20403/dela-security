@@ -1,5 +1,5 @@
 import { App } from 'antd'
-import { screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { describe, expect, it } from 'vitest'
@@ -7,6 +7,7 @@ import { render } from '../../test/render'
 import { server } from '../../test/msw-server'
 import { AlertsPage } from './AlertsPage'
 import { API_PATHS } from './api/api-paths'
+import { alertKeys } from './api/alert-query-keys'
 import { mockAlerts } from './api/mock-alerts'
 
 describe('AlertsPage filter integration', () => {
@@ -74,6 +75,99 @@ describe('AlertsPage filter integration', () => {
 
     await user.click(screen.getByText('Assign to me').closest('button')!)
     expect(screen.getByText('Alex Morgan')).toBeVisible()
+  }, 15_000)
+
+  it('supports Enter, moves focus into the drawer, and restores the exact row after Escape', async () => {
+    const user = userEvent.setup()
+    render(
+      <App>
+        <AlertsPage />
+      </App>,
+    )
+    const title = mockAlerts[0]!.title
+    const row = await screen.findByRole('row', {
+      name: `Select alert ${title}`,
+    })
+    row.focus()
+    await user.keyboard('{Enter}')
+
+    const dialog = await screen.findByRole('dialog')
+    await waitFor(() =>
+      expect(dialog.contains(document.activeElement)).toBe(true),
+    )
+    await user.tab()
+    expect(dialog.contains(document.activeElement)).toBe(true)
+    fireEvent.keyDown(dialog.closest('.ant-drawer')!, {
+      key: 'Escape',
+      keyCode: 27,
+    })
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(row).toHaveFocus()
+  }, 15_000)
+
+  it('restores the exact View button after close button activation', async () => {
+    const user = userEvent.setup()
+    render(
+      <App>
+        <AlertsPage />
+      </App>,
+    )
+    const title = mockAlerts[0]!.title
+    const opener = await screen.findByRole('button', { name: `View ${title}` })
+    await user.click(opener)
+    const dialog = await screen.findByRole('dialog')
+    await waitFor(() =>
+      expect(dialog.contains(document.activeElement)).toBe(true),
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Close' }))
+
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(opener).toHaveFocus()
+  }, 15_000)
+
+  it('keeps cached valid alerts and shows safe warning when refresh payload is malformed', async () => {
+    const validationDetail = 'unexpected private validation detail'
+    const { queryClient } = render(
+      <App>
+        <AlertsPage />
+      </App>,
+    )
+    expect(await screen.findByText(mockAlerts[0]!.title)).toBeVisible()
+    server.use(
+      http.get(API_PATHS.alerts, () =>
+        HttpResponse.json({ invalid: validationDetail }),
+      ),
+    )
+
+    await queryClient.invalidateQueries({ queryKey: alertKeys.lists() })
+
+    expect(
+      await screen.findByText('Showing cached alerts because refresh failed.'),
+    ).toBeVisible()
+    expect(screen.getByText(mockAlerts[0]!.title)).toBeVisible()
+    expect(screen.queryByText(validationDetail)).toBeNull()
+  }, 15_000)
+
+  it('treats a malformed initial payload as a safe hard failure', async () => {
+    const validationDetail = 'unexpected private validation detail'
+    server.use(
+      http.get(API_PATHS.alerts, () =>
+        HttpResponse.json({ invalid: validationDetail }),
+      ),
+    )
+    render(
+      <App>
+        <AlertsPage />
+      </App>,
+    )
+
+    expect(
+      await screen.findByText('Unable to load security alerts'),
+    ).toBeVisible()
+    expect(screen.queryByText(validationDetail)).toBeNull()
+    expect(screen.queryByRole('table')).toBeNull()
   }, 15_000)
 
   it('rolls back a failed optimistic status update and hides repository error details', async () => {

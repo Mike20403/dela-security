@@ -95,4 +95,14 @@ describe('AlertDetailDrawer', () => {
     ).toBeDisabled()
     expect(screen.getByText('Assign to me').closest('button')).toBeDisabled()
   })
+
+  it('caps drawer width at the viewport for narrow layouts', () => {
+    renderDrawer()
+
+    expect(
+      screen.getByRole('dialog').closest('.ant-drawer-content-wrapper'),
+    ).toHaveStyle({
+      width: 'min(40rem, 100vw)',
+    })
+  })
 })

@@ -1,5 +1,5 @@
 import { Alert, App, Button, Result } from 'antd'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { AlertStatus, SecurityAlert } from '../../core/types/alerts'
 import {
   countAlertsByStatus,
@@ -26,6 +26,10 @@ export function AlertsPage() {
   const query = useAlerts()
   const [activeTab, setActiveTab] = useState<AlertTabId>('all')
   const [selectedAlertId, setSelectedAlertId] = useState<string>()
+  const [drawerAlert, setDrawerAlert] = useState<SecurityAlert>()
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  const openerRef = useRef<HTMLElement | null>(null)
+  const pageHeadingRef = useRef<HTMLHeadingElement>(null)
   const filterState = useAlertFilters(() => setActiveTab('all'))
   const alerts = query.data ?? emptyAlerts
   const filteredAlerts = useMemo(
@@ -42,12 +46,24 @@ export function AlertsPage() {
     [alerts],
   )
   const selectedAlert = alerts.find(({ id }) => id === selectedAlertId)
-  useEffect(() => {
-    if (query.data && selectedAlertId && !selectedAlert) {
-      const timeout = window.setTimeout(() => setSelectedAlertId(undefined), 0)
-      return () => window.clearTimeout(timeout)
-    }
-  }, [query.data, selectedAlert, selectedAlertId])
+  const effectiveDrawerOpen = drawerOpen && Boolean(selectedAlert)
+  const openDrawer = (alert: SecurityAlert) => {
+    openerRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null
+    setDrawerAlert(alert)
+    setSelectedAlertId(alert.id)
+    setDrawerOpen(true)
+  }
+  const finishDrawerTransition = (open: boolean) => {
+    if (open) return
+    setSelectedAlertId(undefined)
+    setDrawerAlert(undefined)
+    if (openerRef.current?.isConnected) openerRef.current.focus()
+    else pageHeadingRef.current?.focus()
+    openerRef.current = null
+  }
   const tabs: readonly TabNavigationItem<AlertTabId>[] = [
     { id: 'all', label: 'All', badge: counts.all },
     { id: 'open', label: 'Open', badge: counts.open },
@@ -62,7 +78,11 @@ export function AlertsPage() {
           <p className="text-text-secondary m-0 text-sm font-medium">
             Security operations
           </p>
-          <h1 className="text-text-primary m-0 mt-xs text-xl font-semibold">
+          <h1
+            ref={pageHeadingRef}
+            tabIndex={-1}
+            className="text-text-primary m-0 mt-xs text-xl font-semibold"
+          >
             Security alerts
           </h1>
         </div>
@@ -118,15 +138,14 @@ export function AlertsPage() {
               activeId={activeTab}
               onChange={setActiveTab}
             />
-            <AlertsTable
-              alerts={visibleAlerts}
-              onSelectAlert={(alert) => setSelectedAlertId(alert.id)}
-            />
+            <AlertsTable alerts={visibleAlerts} onSelectAlert={openDrawer} />
           </section>
-          {selectedAlertId && (
+          {drawerAlert && (
             <MutatingAlertDrawer
-              alert={selectedAlert}
-              onClose={() => setSelectedAlertId(undefined)}
+              alert={selectedAlert ?? drawerAlert}
+              open={effectiveDrawerOpen}
+              onClose={() => setDrawerOpen(false)}
+              onAfterOpenChange={finishDrawerTransition}
             />
           )}
         </div>
@@ -137,10 +156,14 @@ export function AlertsPage() {
 
 function MutatingAlertDrawer({
   alert,
+  open,
   onClose,
+  onAfterOpenChange,
 }: {
   alert: SecurityAlert | undefined
+  open: boolean
   onClose: () => void
+  onAfterOpenChange: (open: boolean) => void
 }) {
   const mutation = useAlertMutation()
   const { message } = App.useApp()
@@ -159,9 +182,10 @@ function MutatingAlertDrawer({
   return (
     <AlertDetailDrawer
       alert={alert}
-      open
+      open={open}
       pending={mutation.isPending}
       onClose={onClose}
+      onAfterOpenChange={onAfterOpenChange}
       onStatusChange={(status) => update({ status })}
       onAssignToMe={() => update({ assignedTo: 'Alex Morgan' })}
     />

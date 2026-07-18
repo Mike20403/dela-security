@@ -1,4 +1,5 @@
 import { Button, Descriptions, Drawer, Select, Tag } from 'antd'
+import { useRef } from 'react'
 import type { AlertStatus, SecurityAlert } from '../../../core/types/alerts'
 import { formatDetectedAt } from '../alert-derivations'
 
@@ -7,6 +8,7 @@ interface AlertDetailDrawerProps {
   open: boolean
   pending: boolean
   onClose: () => void
+  onAfterOpenChange?: (open: boolean) => void
   onStatusChange: (status: AlertStatus) => void
   onAssignToMe: () => void
 }
@@ -29,18 +31,26 @@ export function AlertDetailDrawer({
   open,
   pending,
   onClose,
+  onAfterOpenChange,
   onStatusChange,
   onAssignToMe,
 }: AlertDetailDrawerProps) {
+  const firstActionRef = useRef<HTMLButtonElement>(null)
+
   return (
     <Drawer
       title="Alert details"
       open={open}
       onClose={onClose}
-      width={640}
+      afterOpenChange={(nextOpen) => {
+        if (nextOpen) firstActionRef.current?.focus()
+        onAfterOpenChange?.(nextOpen)
+      }}
+      width="min(40rem, 100vw)"
       destroyOnClose
       extra={
         <Button
+          ref={firstActionRef}
           onClick={onAssignToMe}
           loading={pending}
           disabled={pending || !alert || alert.assignedTo === 'Alex Morgan'}
