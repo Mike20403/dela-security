@@ -1,32 +1,53 @@
-import { Alert, Button, Result } from 'antd'
-import { useMemo, useState } from 'react'
-import type { SecurityAlert } from '../../core/types/alerts'
+import { Alert, App, Button, Result } from 'antd'
+import { useEffect, useMemo, useState } from 'react'
+import type { AlertStatus, SecurityAlert } from '../../core/types/alerts'
 import {
   countAlertsByStatus,
   filterAlertsByTab,
   type AlertTabId,
 } from './alert-derivations'
+import { filterAlerts } from './alert-filters'
+import { AlertDetailDrawer } from './components/AlertDetailDrawer'
 import { AlertsTable } from './components/AlertsTable'
 import { AlertsTableSkeleton } from './components/AlertsTableSkeleton'
+import { FilterPanel } from './components/FilterPanel'
 import { SummaryStats } from './components/SummaryStats'
 import {
   TabNavigation,
   type TabNavigationItem,
 } from './components/TabNavigation'
 import { useAlerts } from './hooks/useAlerts'
+import { useAlertFilters } from './hooks/useAlertFilters'
+import { useAlertMutation } from './hooks/useAlertMutation'
 
 const emptyAlerts: never[] = []
 
 export function AlertsPage() {
   const query = useAlerts()
   const [activeTab, setActiveTab] = useState<AlertTabId>('all')
-  const [, setSelectedAlert] = useState<SecurityAlert>()
+  const [selectedAlertId, setSelectedAlertId] = useState<string>()
+  const filterState = useAlertFilters(() => setActiveTab('all'))
   const alerts = query.data ?? emptyAlerts
-  const visibleAlerts = useMemo(
-    () => filterAlertsByTab(alerts, activeTab),
-    [alerts, activeTab],
+  const filteredAlerts = useMemo(
+    () => filterAlerts(alerts, filterState.filters),
+    [alerts, filterState.filters],
   )
-  const counts = countAlertsByStatus(alerts)
+  const visibleAlerts = useMemo(
+    () => filterAlertsByTab(filteredAlerts, activeTab),
+    [filteredAlerts, activeTab],
+  )
+  const counts = countAlertsByStatus(filteredAlerts)
+  const categories = useMemo(
+    () => [...new Set(alerts.map(({ category }) => category))].sort(),
+    [alerts],
+  )
+  const selectedAlert = alerts.find(({ id }) => id === selectedAlertId)
+  useEffect(() => {
+    if (query.data && selectedAlertId && !selectedAlert) {
+      const timeout = window.setTimeout(() => setSelectedAlertId(undefined), 0)
+      return () => window.clearTimeout(timeout)
+    }
+  }, [query.data, selectedAlert, selectedAlertId])
   const tabs: readonly TabNavigationItem<AlertTabId>[] = [
     { id: 'all', label: 'All', badge: counts.all },
     { id: 'open', label: 'Open', badge: counts.open },
@@ -83,6 +104,13 @@ export function AlertsPage() {
               }
             />
           )}
+          <FilterPanel
+            form={filterState.form}
+            filters={filterState.filters}
+            categories={categories}
+            onApply={() => void filterState.apply()}
+            onReset={filterState.reset}
+          />
           <SummaryStats alerts={visibleAlerts} />
           <section className="border-border-default bg-surface-container rounded-md border px-md shadow-sm">
             <TabNavigation
@@ -92,11 +120,50 @@ export function AlertsPage() {
             />
             <AlertsTable
               alerts={visibleAlerts}
-              onSelectAlert={setSelectedAlert}
+              onSelectAlert={(alert) => setSelectedAlertId(alert.id)}
             />
           </section>
+          {selectedAlertId && (
+            <MutatingAlertDrawer
+              alert={selectedAlert}
+              onClose={() => setSelectedAlertId(undefined)}
+            />
+          )}
         </div>
       )}
     </main>
+  )
+}
+
+function MutatingAlertDrawer({
+  alert,
+  onClose,
+}: {
+  alert: SecurityAlert | undefined
+  onClose: () => void
+}) {
+  const mutation = useAlertMutation()
+  const { message } = App.useApp()
+  useEffect(() => {
+    if (mutation.isError) {
+      void message.error(
+        `Unable to update ${alert?.title ?? 'selected alert'}. Change reverted.`,
+      )
+    }
+  }, [alert?.title, message, mutation.isError])
+  const update = (changes: { status?: AlertStatus; assignedTo?: string }) => {
+    if (!alert) return
+    mutation.mutate({ id: alert.id, changes })
+  }
+
+  return (
+    <AlertDetailDrawer
+      alert={alert}
+      open
+      pending={mutation.isPending}
+      onClose={onClose}
+      onStatusChange={(status) => update({ status })}
+      onAssignToMe={() => update({ assignedTo: 'Alex Morgan' })}
+    />
   )
 }

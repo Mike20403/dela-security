@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react'
+import { screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { render } from '../../test/render'
 import { mockAlerts } from './api/mock-alerts'
 import { AlertsPage } from './AlertsPage'
 import { useAlerts } from './hooks/useAlerts'
@@ -82,5 +83,58 @@ describe('AlertsPage', () => {
     expect(
       screen.getByText('DCSync replication requested by non-controller'),
     ).toBeVisible()
+  })
+
+  it('applies filters before tab counts and resets filters with All tab', async () => {
+    mockedUseAlerts.mockReturnValue({
+      isPending: false,
+      isError: false,
+      data: mockAlerts,
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useAlerts>)
+    render(<AlertsPage />)
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Open 8' }))
+    await userEvent.type(
+      screen.getByRole('searchbox', { name: 'Search alerts' }),
+      'Golden Ticket',
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Apply filters' }))
+
+    expect(screen.getByRole('tab', { name: 'All 1' })).toBeVisible()
+    expect(screen.getByRole('tab', { name: 'Open 0' })).toBeVisible()
+    expect(screen.getByLabelText('Total alerts')).toHaveTextContent('0')
+    expect(screen.getByText('1 active filter')).toBeVisible()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reset filters' }))
+    expect(screen.getByRole('tab', { name: 'All 32' })).toHaveAttribute(
+      'aria-selected',
+      'true',
+    )
+    expect(screen.getByLabelText('Total alerts')).toHaveTextContent('32')
+  })
+
+  it('closes an open drawer after loaded data no longer contains its ID', async () => {
+    mockedUseAlerts.mockReturnValue({
+      isPending: false,
+      isError: false,
+      data: [mockAlerts[0]],
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useAlerts>)
+    const { rerender } = render(<AlertsPage />)
+
+    await userEvent.click(
+      screen.getByRole('button', { name: `View ${mockAlerts[0]!.title}` }),
+    )
+    expect(screen.getByRole('dialog')).toBeVisible()
+
+    mockedUseAlerts.mockReturnValue({
+      isPending: false,
+      isError: false,
+      data: [],
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useAlerts>)
+    rerender(<AlertsPage />)
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
   })
 })
