@@ -38,6 +38,17 @@ describe('application routing', () => {
     expect(router.state.historyAction).toBe('REPLACE')
   })
 
+  it('renders the real alerts read experience at /alerts', async () => {
+    renderRoute('/alerts')
+
+    expect(
+      await screen.findByRole('table', { name: 'Security alerts' }),
+    ).toBeVisible()
+    expect(
+      screen.getByText('DCSync replication requested by non-controller'),
+    ).toBeVisible()
+  })
+
   it('renders /alerts through full provider hierarchy', async () => {
     const router = createMemoryRouter(
       createAppRoutes(() => {

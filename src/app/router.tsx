@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react'
 import { createBrowserRouter, type RouteObject } from 'react-router-dom'
+import { AlertsPage } from '../pages/alerts/AlertsPage'
 import {
-  AlertsPlaceholder,
   NotFoundPage,
   RootLayout,
   RootRedirect,
@@ -9,7 +9,7 @@ import {
 } from './route-elements'
 
 export function createAppRoutes(
-  AlertsPage: ComponentType = AlertsPlaceholder,
+  AlertsPageComponent: ComponentType = AlertsPage,
   additionalRoutes: RouteObject[] = [],
 ): RouteObject[] {
   return [
@@ -19,7 +19,7 @@ export function createAppRoutes(
       errorElement: <RouteErrorPage />,
       children: [
         { index: true, element: <RootRedirect /> },
-        { path: 'alerts', element: <AlertsPage /> },
+        { path: 'alerts', element: <AlertsPageComponent /> },
         ...additionalRoutes,
         { path: '*', element: <NotFoundPage /> },
       ],
