@@ -6,6 +6,11 @@ import './styles/global.css'
 
 applyCssVariables()
 
+if (import.meta.env.DEV) {
+  const { worker } = await import('./pages/alerts/api/mock/browser')
+  await worker.start({ onUnhandledRequest: 'bypass' })
+}
+
 const root = document.getElementById('root')
 
 if (!root) {

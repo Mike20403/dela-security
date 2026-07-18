@@ -1,4 +1,9 @@
-export type AppErrorCode = 'NETWORK' | 'VALIDATION' | 'NOT_FOUND' | 'UNKNOWN'
+export type AppErrorCode =
+  | 'NETWORK'
+  | 'VALIDATION'
+  | 'NOT_FOUND'
+  | 'INTERNAL'
+  | 'UNKNOWN'
 
 interface AppErrorOptions {
   cause?: unknown

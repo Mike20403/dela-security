@@ -60,14 +60,14 @@ Build foundation before feature UI. Single source for tokens, models, query keys
 
 5. **Phase 5: Domain and Data Foundation**
     - **Objective:** Establish canonical alert models, realistic data, repository boundary, mock API, and query keys.
-    - **Files/Functions to Modify/Create:** `src/core/types/alerts.ts`, `src/pages/alerts/api/alerts-repository.ts`, `mock-alerts-repository.ts`, `mock-alerts.ts`, `alert-query-keys.ts`, `src/pages/alerts/hooks/useAlerts.ts`
-    - **Tests to Write:** 30+ records satisfy model invariants; all severities/statuses represented; repository returns copies; delay is injectable; first-load failure is controlled; query keys remain stable
+    - **Files/Functions to Modify/Create:** `src/core/types/alerts.ts`, `src/pages/alerts/api/alerts-repository.ts`, `fetch-alerts-repository.ts`, MSW handlers, `mock-alerts.ts`, `alert-query-keys.ts`, `src/pages/alerts/hooks/useAlerts.ts`
+    - **Tests to Write:** 30+ records satisfy model invariants; all severities/statuses represented; fetch responses are isolated; delay is configurable; first-load failure is controlled; query keys remain stable
     - **Steps:**
         1. Define assignment models once in `src/core/types/alerts.ts`.
         2. Write failing model-fixture and repository tests.
         3. Create domain-facing `AlertsRepository`, not generic CRUD infrastructure.
-        4. Add stateful in-memory repository with configurable 600–900 ms delay.
-        5. Add controllable 20% first-load error behavior.
+        4. Add a native fetch repository and stateful MSW REST handlers with configurable 600–900 ms delay.
+        5. Add controllable 20% browser-development first-load error behavior.
         6. Return copied records to prevent accidental fixture mutation.
         7. Define centralized hierarchical query keys.
         8. Implement `useAlerts` against repository contract.
@@ -127,7 +127,7 @@ Build foundation before feature UI. Single source for tokens, models, query keys
 ## Deliberate Deferrals
 
 - Axios: no HTTP backend exists; `AlertsRepository` provides replaceable boundary.
-- MSW: no HTTP requests exist to intercept.
+- MSW deferral reversed by user decision: standard network-boundary mocking now backs the native fetch repository in browser development and tests.
 - Generic API client, CRUD framework, dependency-injection container, auth, token refresh, global event bus, and state library: no current requirement.
 - Generic Ant component wrappers: add only after repeated product behavior appears.
 - Stretch dependencies: add only after core quality gates pass.

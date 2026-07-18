@@ -1,5 +1,14 @@
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
-import { afterEach } from 'vitest'
+import { afterAll, afterEach, beforeAll } from 'vitest'
+import { resetTestAlertMock, server } from './msw-server'
 
-afterEach(cleanup)
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
+
+afterEach(() => {
+  cleanup()
+  server.resetHandlers()
+  resetTestAlertMock()
+})
+
+afterAll(() => server.close())
