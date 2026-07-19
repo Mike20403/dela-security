@@ -8,7 +8,7 @@ import { resetTestAlertMock, server } from './msw-server'
 // jsdom has no canvas rendering backend, so Chart.js cannot mount. Tests that
 // need real dataset/prop assertions can still override this mock per-file.
 vi.mock('react-chartjs-2', () => ({
-  Bar: () => null,
+  Line: () => null,
 }))
 
 Object.defineProperty(window, 'matchMedia', {

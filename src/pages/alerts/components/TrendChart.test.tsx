@@ -4,12 +4,12 @@ import { systemTokens } from '../../../core/theme/tokens'
 import type { SecurityAlert } from '../../../core/types/alerts'
 import { TrendChart } from './TrendChart'
 
-const barMock = vi.fn((props: unknown) => {
+const lineMock = vi.fn((props: unknown) => {
   void props
   return <canvas role="img" aria-label="trend-chart" />
 })
 vi.mock('react-chartjs-2', () => ({
-  Bar: (props: unknown) => barMock(props),
+  Line: (props: unknown) => lineMock(props),
 }))
 
 const makeAlert = (
@@ -37,16 +37,16 @@ describe('TrendChart', () => {
     ).toBeVisible()
   })
 
-  it('passes stacked, per-severity datasets colored from severity feedback tokens', () => {
+  it('passes per-severity line datasets colored from severity feedback tokens', () => {
     render(
       <TrendChart
         alerts={[makeAlert('1', 'critical', new Date().toISOString())]}
       />,
     )
-    const props = barMock.mock.calls.at(-1)?.[0] as {
+    const props = lineMock.mock.calls.at(-1)?.[0] as {
       data: {
         labels: string[]
-        datasets: { label: string; data: number[]; backgroundColor: string }[]
+        datasets: { label: string; data: number[]; borderColor: string }[]
       }
     }
     expect(props.data.labels).toHaveLength(7)
@@ -54,7 +54,7 @@ describe('TrendChart', () => {
     const criticalDataset = props.data.datasets.find(
       (dataset) => dataset.label === 'Critical',
     )
-    expect(criticalDataset?.backgroundColor).toBe(
+    expect(criticalDataset?.borderColor).toBe(
       systemTokens.color.feedback.danger.foreground,
     )
     expect(criticalDataset?.data.reduce((sum, n) => sum + n, 0)).toBe(1)
