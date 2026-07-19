@@ -1,4 +1,5 @@
 import { Alert, App, Button, Result } from 'antd'
+import { RefreshCw } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { AlertStatus, SecurityAlert } from '../../core/types/alerts'
 import {
@@ -22,7 +23,6 @@ import { useAlertFilters } from './hooks/useAlertFilters'
 import { useAlertMutation } from './hooks/useAlertMutation'
 
 const emptyAlerts: never[] = []
-const monitoredDirectory = 'corp.example.com'
 
 const lastUpdatedFormatter = new Intl.DateTimeFormat('en-US', {
   dateStyle: 'medium',
@@ -94,28 +94,17 @@ export function AlertsPage() {
 
   return (
     <div className="mx-auto max-w-[100rem] p-md lg:p-xl">
-      <div className="mb-md flex flex-wrap items-center justify-between gap-sm text-sm">
-        <p
-          className="text-foreground-muted m-0"
-          aria-label="Monitored directory"
-        >
-          Monitoring {monitoredDirectory}
-          {import.meta.env.DEV && (
-            <span className="text-foreground-muted">
-              {' '}
-              · Development (mock data)
-            </span>
-          )}
-        </p>
+      <div className="mb-md flex flex-wrap items-center justify-end gap-sm text-sm">
         <div className="flex items-center gap-sm">
           <p className="text-foreground-muted m-0" aria-label="Last updated">
             {formatLastUpdated(query.dataUpdatedAt)}
           </p>
           <button
             type="button"
-            className="border-border-default text-foreground-default rounded-md border px-sm py-xs text-sm font-medium"
+            className="border-border-default text-foreground-default flex items-center gap-xs rounded-md border px-sm py-xs text-sm font-medium"
             onClick={() => void query.refetch()}
           >
+            <RefreshCw size={16} aria-hidden="true" />
             Refresh
           </button>
         </div>

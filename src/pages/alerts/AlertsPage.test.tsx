@@ -28,7 +28,7 @@ describe('AlertsPage', () => {
     ).toBeVisible()
   })
 
-  it('shows monitored directory, mock-data status, last-updated time, and refresh action', async () => {
+  it('shows last-updated time and refresh action', async () => {
     const refetch = vi.fn()
     mockedUseAlerts.mockReturnValue({
       isPending: false,
@@ -39,14 +39,25 @@ describe('AlertsPage', () => {
     } as unknown as ReturnType<typeof useAlerts>)
     render(<AlertsPage />)
 
-    expect(screen.getByLabelText('Monitored directory')).toHaveTextContent(
-      /corp\.example\.com/,
-    )
-    expect(screen.getByText(/mock data/i)).toBeVisible()
     expect(screen.getByLabelText('Last updated')).toHaveTextContent(/Updated/i)
 
     await userEvent.click(screen.getByRole('button', { name: 'Refresh' }))
     expect(refetch).toHaveBeenCalledOnce()
+  })
+
+  it('never renders monitored-directory or mock-data development copy', () => {
+    mockedUseAlerts.mockReturnValue({
+      isPending: false,
+      isError: false,
+      data: mockAlerts,
+      dataUpdatedAt: Date.parse('2026-07-19T10:00:00Z'),
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useAlerts>)
+    render(<AlertsPage />)
+
+    expect(screen.queryByLabelText('Monitored directory')).toBeNull()
+    expect(screen.queryByText(/monitoring corp\.example\.com/i)).toBeNull()
+    expect(screen.queryByText(/mock data/i)).toBeNull()
   })
 
   it('shows a meaningful table-shaped initial skeleton', () => {

@@ -61,6 +61,81 @@ describe('AppShell', () => {
     ).toBeVisible()
   })
 
+  it('keeps an accessible Alerts link name and shows an icon when collapsed', async () => {
+    renderShell()
+
+    await userEvent.click(
+      screen.getByRole('button', { name: /collapse sidebar/i }),
+    )
+
+    const alertsLink = screen.getByRole('link', { name: 'Alerts' })
+    expect(alertsLink.querySelector('svg')).toBeInTheDocument()
+  })
+
+  it('renders an icon inside the collapse toggle button', () => {
+    renderShell()
+
+    const toggle = screen.getByRole('button', { name: /collapse sidebar/i })
+    expect(toggle.querySelector('svg')).toBeInTheDocument()
+  })
+
+  it('has a mobile menu button with correct aria attributes and accessible name', () => {
+    renderShell()
+
+    const sidebar = screen.getByRole('navigation').closest('aside')
+    const menuButton = screen.getByRole('button', { name: 'Open navigation' })
+
+    expect(menuButton).toHaveAttribute('aria-expanded', 'false')
+    expect(menuButton).toHaveAttribute('aria-controls', sidebar?.id)
+  })
+
+  it('opens the mobile sidebar when the menu button is clicked', async () => {
+    renderShell()
+
+    const sidebar = screen.getByRole('navigation').closest('aside')
+    const menuButton = screen.getByRole('button', { name: 'Open navigation' })
+
+    expect(sidebar?.className).toMatch(/-translate-x-full/)
+
+    await userEvent.click(menuButton)
+
+    expect(menuButton).toHaveAttribute('aria-expanded', 'true')
+    expect(sidebar?.className).not.toMatch(/-translate-x-full/)
+  })
+
+  it('closes the mobile sidebar when the backdrop is clicked', async () => {
+    renderShell()
+
+    const menuButton = screen.getByRole('button', { name: 'Open navigation' })
+    await userEvent.click(menuButton)
+
+    const backdrop = screen.getByTestId('sidebar-backdrop')
+    await userEvent.click(backdrop)
+
+    expect(menuButton).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it('closes the mobile sidebar when Escape is pressed', async () => {
+    renderShell()
+
+    const menuButton = screen.getByRole('button', { name: 'Open navigation' })
+    await userEvent.click(menuButton)
+    expect(menuButton).toHaveAttribute('aria-expanded', 'true')
+
+    await userEvent.keyboard('{Escape}')
+
+    expect(menuButton).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it('gives main the classes needed to avoid fixed-width overflow', () => {
+    renderShell()
+
+    const main = screen.getByRole('main')
+    expect(main.className).toContain('min-w-0')
+    expect(main.className).toContain('flex-1')
+    expect(main.className).toContain('w-full')
+  })
+
   it('provides a skip link that moves focus to main content', async () => {
     renderShell()
 
