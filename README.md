@@ -2,7 +2,7 @@
 
 A security-operations product dashboard for triaging directory-security alerts. A collapsible sidebar shell with a real navigation landmark, a distinct brand palette, and `/alerts` provide reactive status summaries, validated filters, an accessible alert table with a pinned action column, and detail actions with resilient loading/error states.
 
-![Uploading Screenshot 2026-07-19 at 21.42.40.png…]()
+<img width="1511" height="747" alt="Screenshot 2026-07-19 at 21 42 40" src="https://github.com/user-attachments/assets/b58fe52d-3c16-4f48-bb0c-8fd859de0779" />
 
 ## Prerequisites and setup
 
