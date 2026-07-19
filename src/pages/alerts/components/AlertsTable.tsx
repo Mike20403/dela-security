@@ -7,36 +7,11 @@ import type {
   SecurityAlert,
 } from '../../../core/types/alerts'
 import { formatDetectedAt } from '../alert-derivations'
+import { severityPresentation, statusPresentation } from '../alert-presentation'
 
 interface AlertsTableProps {
   alerts: readonly SecurityAlert[]
   onSelectAlert: (alert: SecurityAlert) => void
-}
-
-const severityLabels: Record<AlertSeverity, string> = {
-  critical: 'Critical',
-  high: 'High',
-  medium: 'Medium',
-  low: 'Low',
-}
-const statusLabels: Record<AlertStatus, string> = {
-  open: 'Open',
-  in_review: 'In Review',
-  resolved: 'Resolved',
-  suppressed: 'Suppressed',
-}
-// ponytail: Phase 3 replaces these with typed alert presentation metadata; classes are static CSS (--dela-legacy-alert-*), not inline style.
-const severityClasses: Record<AlertSeverity, string> = {
-  critical: 'text-severity-critical bg-severity-surface-critical',
-  high: 'text-severity-high bg-severity-surface-high',
-  medium: 'text-severity-medium bg-severity-surface-medium',
-  low: 'text-severity-low bg-severity-surface-low',
-}
-const statusClasses: Record<AlertStatus, string> = {
-  open: 'text-status-new bg-status-surface-new',
-  in_review: 'text-status-investigating bg-status-surface-investigating',
-  resolved: 'text-status-resolved bg-status-surface-resolved',
-  suppressed: 'text-status-dismissed bg-status-surface-dismissed',
 }
 
 export function AlertsTable({ alerts, onSelectAlert }: AlertsTableProps) {
@@ -60,8 +35,11 @@ function PaginatedAlertsTable({ alerts, onSelectAlert }: AlertsTableProps) {
       dataIndex: 'severity',
       width: 110,
       render: (severity: AlertSeverity) => (
-        <Tag bordered={false} className={severityClasses[severity]}>
-          {severityLabels[severity]}
+        <Tag
+          bordered={false}
+          className={severityPresentation[severity].className}
+        >
+          {severityPresentation[severity].label}
         </Tag>
       ),
     },
@@ -80,8 +58,8 @@ function PaginatedAlertsTable({ alerts, onSelectAlert }: AlertsTableProps) {
       dataIndex: 'status',
       width: 120,
       render: (status: AlertStatus) => (
-        <Tag bordered={false} className={statusClasses[status]}>
-          {statusLabels[status]}
+        <Tag bordered={false} className={statusPresentation[status].className}>
+          {statusPresentation[status].label}
         </Tag>
       ),
     },

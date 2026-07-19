@@ -1,7 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { antdTheme } from './antd-theme.ts'
-import { legacyAlertTokenAdapter } from './internal/legacy-alert-compat.ts'
 import { referenceTokens } from './internal/reference-tokens.ts'
 import * as themeExports from './tokens.ts'
 import { publicSystemCssVariables, systemTokens } from './tokens.ts'
@@ -108,6 +107,8 @@ describe('product token contracts', () => {
       'success',
       'warning',
       'danger',
+      'caution',
+      'neutral',
     ])
     for (const feedback of Object.values(systemTokens.color.feedback)) {
       expect(Object.keys(feedback)).toEqual([
@@ -203,6 +204,18 @@ describe('product token contracts', () => {
         systemTokens.color.feedback.danger.background,
       '--dela-sys-color-feedback-danger-border':
         systemTokens.color.feedback.danger.border,
+      '--dela-sys-color-feedback-caution-foreground':
+        systemTokens.color.feedback.caution.foreground,
+      '--dela-sys-color-feedback-caution-background':
+        systemTokens.color.feedback.caution.background,
+      '--dela-sys-color-feedback-caution-border':
+        systemTokens.color.feedback.caution.border,
+      '--dela-sys-color-feedback-neutral-foreground':
+        systemTokens.color.feedback.neutral.foreground,
+      '--dela-sys-color-feedback-neutral-background':
+        systemTokens.color.feedback.neutral.background,
+      '--dela-sys-color-feedback-neutral-border':
+        systemTokens.color.feedback.neutral.border,
       '--dela-sys-color-selection-background':
         systemTokens.color.selection.background,
       '--dela-sys-color-selection-foreground':
@@ -378,15 +391,12 @@ describe('CSS integration', () => {
     expect(readStyle('global.css')).not.toMatch(/--app-/)
   })
 
-  it('exposes alert severity/status classes as static CSS, not inline style', () => {
+  it('exposes alert severity/status classes as static CSS sourced from systemTokens feedback roles', () => {
     const tokenCss = readStyle('tokens.css')
 
-    expect(tokenCss).toContain('ponytail:')
-    expect(tokenCss).toMatch(/Phase ?3/)
+    expect(tokenCss).not.toMatch(/dela-legacy-alert/)
 
     for (const name of ['critical', 'high', 'medium', 'low']) {
-      expect(tokenCss).toContain(`--dela-legacy-alert-severity-${name}`)
-      expect(tokenCss).toContain(`--dela-legacy-alert-severity-surface-${name}`)
       expect(tokenCss).toMatch(new RegExp(`@utility text-severity-${name} \\{`))
       expect(tokenCss).toMatch(
         new RegExp(`@utility bg-severity-surface-${name} \\{`),
@@ -396,9 +406,7 @@ describe('CSS integration', () => {
       )
     }
 
-    for (const name of ['new', 'investigating', 'resolved', 'dismissed']) {
-      expect(tokenCss).toContain(`--dela-legacy-alert-status-${name}`)
-      expect(tokenCss).toContain(`--dela-legacy-alert-status-surface-${name}`)
+    for (const name of ['open', 'in_review', 'resolved', 'suppressed']) {
       expect(tokenCss).toMatch(new RegExp(`@utility text-status-${name} \\{`))
       expect(tokenCss).toMatch(
         new RegExp(`@utility bg-status-surface-${name} \\{`),
@@ -406,29 +414,31 @@ describe('CSS integration', () => {
     }
   })
 
-  it.each(['critical', 'high', 'medium', 'low'] as const)(
+  it.each([
+    ['critical', systemTokens.color.feedback.danger],
+    ['high', systemTokens.color.feedback.caution],
+    ['medium', systemTokens.color.feedback.warning],
+    ['low', systemTokens.color.feedback.neutral],
+  ] as const)(
     '%s severity foreground/background pair meets WCAG contrast',
-    (name) => {
-      const foreground = (
-        legacyAlertTokenAdapter.severity as Record<string, string>
-      )[name]!
-      const background = (
-        legacyAlertTokenAdapter.severitySurface as Record<string, string>
-      )[name]!
-      expect(contrast(foreground, background)).toBeGreaterThanOrEqual(4.5)
+    (_name, feedback) => {
+      expect(
+        contrast(feedback.foreground, feedback.background),
+      ).toBeGreaterThanOrEqual(4.5)
     },
   )
 
-  it.each(['new', 'investigating', 'resolved', 'dismissed'] as const)(
+  it.each([
+    ['open', systemTokens.color.feedback.info],
+    ['in_review', systemTokens.color.feedback.warning],
+    ['resolved', systemTokens.color.feedback.success],
+    ['suppressed', systemTokens.color.feedback.neutral],
+  ] as const)(
     '%s status foreground/background pair meets WCAG contrast',
-    (name) => {
-      const foreground = (
-        legacyAlertTokenAdapter.status as Record<string, string>
-      )[name]!
-      const background = (
-        legacyAlertTokenAdapter.statusSurface as Record<string, string>
-      )[name]!
-      expect(contrast(foreground, background)).toBeGreaterThanOrEqual(4.5)
+    (_name, feedback) => {
+      expect(
+        contrast(feedback.foreground, feedback.background),
+      ).toBeGreaterThanOrEqual(4.5)
     },
   )
 })

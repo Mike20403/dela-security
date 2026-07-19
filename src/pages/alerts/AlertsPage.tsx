@@ -7,6 +7,7 @@ import {
   type AlertTabId,
 } from './alert-derivations'
 import { filterAlerts } from './alert-filters'
+import { statusPresentation } from './alert-presentation'
 import { AlertDetailDrawer } from './components/AlertDetailDrawer'
 import { AlertsTable } from './components/AlertsTable'
 import { AlertsTableSkeleton } from './components/AlertsTableSkeleton'
@@ -66,9 +67,17 @@ export function AlertsPage() {
   }
   const tabs: readonly TabNavigationItem<AlertTabId>[] = [
     { id: 'all', label: 'All', badge: counts.all },
-    { id: 'open', label: 'Open', badge: counts.open },
-    { id: 'in_review', label: 'In Review', badge: counts.in_review },
-    { id: 'resolved', label: 'Resolved', badge: counts.resolved },
+    { id: 'open', label: statusPresentation.open.label, badge: counts.open },
+    {
+      id: 'in_review',
+      label: statusPresentation.in_review.label,
+      badge: counts.in_review,
+    },
+    {
+      id: 'resolved',
+      label: statusPresentation.resolved.label,
+      badge: counts.resolved,
+    },
   ]
 
   return (

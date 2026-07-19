@@ -62,6 +62,16 @@ export const systemTokens = {
         background: color.red[50],
         border: color.red[700],
       },
+      caution: {
+        foreground: color.orange[700],
+        background: color.orange[50],
+        border: color.orange[700],
+      },
+      neutral: {
+        foreground: color.neutral[500],
+        background: color.neutral[50],
+        border: color.neutral[300],
+      },
     },
     selection: {
       background: color.blue[50],
@@ -179,6 +189,18 @@ export const publicSystemCssVariables = {
     systemTokens.color.feedback.danger.background,
   '--dela-sys-color-feedback-danger-border':
     systemTokens.color.feedback.danger.border,
+  '--dela-sys-color-feedback-caution-foreground':
+    systemTokens.color.feedback.caution.foreground,
+  '--dela-sys-color-feedback-caution-background':
+    systemTokens.color.feedback.caution.background,
+  '--dela-sys-color-feedback-caution-border':
+    systemTokens.color.feedback.caution.border,
+  '--dela-sys-color-feedback-neutral-foreground':
+    systemTokens.color.feedback.neutral.foreground,
+  '--dela-sys-color-feedback-neutral-background':
+    systemTokens.color.feedback.neutral.background,
+  '--dela-sys-color-feedback-neutral-border':
+    systemTokens.color.feedback.neutral.border,
   '--dela-sys-color-selection-background':
     systemTokens.color.selection.background,
   '--dela-sys-color-selection-foreground':

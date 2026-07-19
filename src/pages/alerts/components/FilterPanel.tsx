@@ -2,9 +2,9 @@ import { Badge, Button, DatePicker, Input, Select } from 'antd'
 import dayjs, { type Dayjs } from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import { Controller, type UseFormReturn } from 'react-hook-form'
-import type { AlertSeverity } from '../../../core/types/alerts'
 import type { AlertFilters } from '../alert-filter-schema'
 import { countActiveFilters } from '../alert-filters'
+import { severityOptions, severityPresentation } from '../alert-presentation'
 
 interface FilterPanelProps {
   form: UseFormReturn<AlertFilters>
@@ -13,13 +13,6 @@ interface FilterPanelProps {
   onApply: () => void
   onReset: () => void
 }
-
-const severityOptions: { label: string; value: AlertSeverity }[] = [
-  { label: 'Critical', value: 'critical' },
-  { label: 'High', value: 'high' },
-  { label: 'Medium', value: 'medium' },
-  { label: 'Low', value: 'low' },
-]
 
 dayjs.extend(customParseFormat)
 
@@ -133,7 +126,7 @@ export function FilterPanel({
           <span
             id="date-range-error"
             role="alert"
-            className="text-severity-critical mt-xs block"
+            className={`${severityPresentation.critical.textClassName} mt-xs block`}
           >
             {form.formState.errors.dateRange.message}
           </span>

@@ -1,6 +1,7 @@
 import type { SecurityAlert } from '../../../core/types/alerts'
 import { cn } from '../../../core/utils/cn'
 import { summarizeAlerts } from '../alert-derivations'
+import { severityPresentation } from '../alert-presentation'
 
 interface SummaryStatsProps {
   alerts: readonly SecurityAlert[]
@@ -14,18 +15,18 @@ const stats: readonly {
   { key: 'total', label: 'Total alerts' },
   {
     key: 'critical',
-    label: 'Critical',
-    borderClass: 'border-t-[3px] border-t-severity-critical',
+    label: severityPresentation.critical.label,
+    borderClass: `border-t-[3px] ${severityPresentation.critical.borderTopClassName}`,
   },
   {
     key: 'high',
-    label: 'High',
-    borderClass: 'border-t-[3px] border-t-severity-high',
+    label: severityPresentation.high.label,
+    borderClass: `border-t-[3px] ${severityPresentation.high.borderTopClassName}`,
   },
   {
     key: 'mediumLow',
     label: 'Medium / Low',
-    borderClass: 'border-t-[3px] border-t-severity-medium',
+    borderClass: `border-t-[3px] ${severityPresentation.medium.borderTopClassName}`,
   },
 ]
 

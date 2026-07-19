@@ -34,6 +34,12 @@
   --dela-sys-color-feedback-danger-foreground: #b91c1c;
   --dela-sys-color-feedback-danger-background: #fef2f2;
   --dela-sys-color-feedback-danger-border: #b91c1c;
+  --dela-sys-color-feedback-caution-foreground: #c2410c;
+  --dela-sys-color-feedback-caution-background: #fff7ed;
+  --dela-sys-color-feedback-caution-border: #c2410c;
+  --dela-sys-color-feedback-neutral-foreground: #475569;
+  --dela-sys-color-feedback-neutral-background: #f1f5f9;
+  --dela-sys-color-feedback-neutral-border: #94a3b8;
   --dela-sys-color-selection-background: #eff6ff;
   --dela-sys-color-selection-foreground: #1d4ed8;
   --dela-sys-color-focus-ring: #2563eb;
@@ -71,24 +77,6 @@
   --dela-sys-motion-duration-fast: 100ms;
   --dela-sys-motion-duration-normal: 180ms;
   --dela-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
-
-  /* ponytail: Phase 3 removes alert-domain color from core tokens; remove this block and legacyAlertTokenAdapter/legacy-alert-compat then. */
-  --dela-legacy-alert-severity-critical: #b91c1c;
-  --dela-legacy-alert-severity-high: #c2410c;
-  --dela-legacy-alert-severity-medium: #a16207;
-  --dela-legacy-alert-severity-low: #0e7490;
-  --dela-legacy-alert-severity-surface-critical: #fef2f2;
-  --dela-legacy-alert-severity-surface-high: #fff7ed;
-  --dela-legacy-alert-severity-surface-medium: #fffbeb;
-  --dela-legacy-alert-severity-surface-low: #ecfeff;
-  --dela-legacy-alert-status-new: #2563eb;
-  --dela-legacy-alert-status-investigating: #a16207;
-  --dela-legacy-alert-status-resolved: #15803d;
-  --dela-legacy-alert-status-dismissed: #475569;
-  --dela-legacy-alert-status-surface-new: #eff6ff;
-  --dela-legacy-alert-status-surface-investigating: #fffbeb;
-  --dela-legacy-alert-status-surface-resolved: #f0fdf4;
-  --dela-legacy-alert-status-surface-dismissed: #f1f5f9;
 }
 
 @theme inline {
@@ -131,64 +119,67 @@
   --breakpoint-xl: 80rem;
 }
 
-/* ponytail: alert severity/status utilities below — Phase 3 removal target, see --dela-legacy-alert-* block above. */
+/* Alert severity/status utilities: class names stay stable for component usage, but
+   colors resolve directly to canonical systemTokens feedback roles (no second token
+   system). severity: critical->danger, high->caution, medium->warning, low->neutral.
+   status: open->info, in_review->warning, resolved->success, suppressed->neutral. */
 @utility text-severity-critical {
-  color: var(--dela-legacy-alert-severity-critical);
+  color: var(--dela-sys-color-feedback-danger-foreground);
 }
 @utility text-severity-high {
-  color: var(--dela-legacy-alert-severity-high);
+  color: var(--dela-sys-color-feedback-caution-foreground);
 }
 @utility text-severity-medium {
-  color: var(--dela-legacy-alert-severity-medium);
+  color: var(--dela-sys-color-feedback-warning-foreground);
 }
 @utility text-severity-low {
-  color: var(--dela-legacy-alert-severity-low);
+  color: var(--dela-sys-color-feedback-neutral-foreground);
 }
 @utility bg-severity-surface-critical {
-  background-color: var(--dela-legacy-alert-severity-surface-critical);
+  background-color: var(--dela-sys-color-feedback-danger-background);
 }
 @utility bg-severity-surface-high {
-  background-color: var(--dela-legacy-alert-severity-surface-high);
+  background-color: var(--dela-sys-color-feedback-caution-background);
 }
 @utility bg-severity-surface-medium {
-  background-color: var(--dela-legacy-alert-severity-surface-medium);
+  background-color: var(--dela-sys-color-feedback-warning-background);
 }
 @utility bg-severity-surface-low {
-  background-color: var(--dela-legacy-alert-severity-surface-low);
+  background-color: var(--dela-sys-color-feedback-neutral-background);
 }
 @utility border-t-severity-critical {
-  border-top-color: var(--dela-legacy-alert-severity-critical);
+  border-top-color: var(--dela-sys-color-feedback-danger-border);
 }
 @utility border-t-severity-high {
-  border-top-color: var(--dela-legacy-alert-severity-high);
+  border-top-color: var(--dela-sys-color-feedback-caution-border);
 }
 @utility border-t-severity-medium {
-  border-top-color: var(--dela-legacy-alert-severity-medium);
+  border-top-color: var(--dela-sys-color-feedback-warning-border);
 }
 @utility border-t-severity-low {
-  border-top-color: var(--dela-legacy-alert-severity-low);
+  border-top-color: var(--dela-sys-color-feedback-neutral-border);
 }
-@utility text-status-new {
-  color: var(--dela-legacy-alert-status-new);
+@utility text-status-open {
+  color: var(--dela-sys-color-feedback-info-foreground);
 }
-@utility text-status-investigating {
-  color: var(--dela-legacy-alert-status-investigating);
+@utility text-status-in_review {
+  color: var(--dela-sys-color-feedback-warning-foreground);
 }
 @utility text-status-resolved {
-  color: var(--dela-legacy-alert-status-resolved);
+  color: var(--dela-sys-color-feedback-success-foreground);
 }
-@utility text-status-dismissed {
-  color: var(--dela-legacy-alert-status-dismissed);
+@utility text-status-suppressed {
+  color: var(--dela-sys-color-feedback-neutral-foreground);
 }
-@utility bg-status-surface-new {
-  background-color: var(--dela-legacy-alert-status-surface-new);
+@utility bg-status-surface-open {
+  background-color: var(--dela-sys-color-feedback-info-background);
 }
-@utility bg-status-surface-investigating {
-  background-color: var(--dela-legacy-alert-status-surface-investigating);
+@utility bg-status-surface-in_review {
+  background-color: var(--dela-sys-color-feedback-warning-background);
 }
 @utility bg-status-surface-resolved {
-  background-color: var(--dela-legacy-alert-status-surface-resolved);
+  background-color: var(--dela-sys-color-feedback-success-background);
 }
-@utility bg-status-surface-dismissed {
-  background-color: var(--dela-legacy-alert-status-surface-dismissed);
+@utility bg-status-surface-suppressed {
+  background-color: var(--dela-sys-color-feedback-neutral-background);
 }

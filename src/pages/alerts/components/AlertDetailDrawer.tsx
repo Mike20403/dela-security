@@ -2,6 +2,7 @@ import { Button, Descriptions, Drawer, Select, Tag } from 'antd'
 import { useRef } from 'react'
 import type { AlertStatus, SecurityAlert } from '../../../core/types/alerts'
 import { formatDetectedAt } from '../alert-derivations'
+import { severityPresentation, statusOptions } from '../alert-presentation'
 
 interface AlertDetailDrawerProps {
   alert: SecurityAlert | undefined
@@ -12,19 +13,6 @@ interface AlertDetailDrawerProps {
   onStatusChange: (status: AlertStatus) => void
   onAssignToMe: () => void
 }
-
-const statusOptions: { label: string; value: AlertStatus }[] = [
-  { label: 'Open', value: 'open' },
-  { label: 'In Review', value: 'in_review' },
-  { label: 'Resolved', value: 'resolved' },
-  { label: 'Suppressed', value: 'suppressed' },
-]
-const severityLabels = {
-  critical: 'Critical',
-  high: 'High',
-  medium: 'Medium',
-  low: 'Low',
-} as const
 
 export function AlertDetailDrawer({
   alert,
@@ -65,7 +53,7 @@ export function AlertDetailDrawer({
             <Descriptions.Item label="ID">{alert.id}</Descriptions.Item>
             <Descriptions.Item label="Title">{alert.title}</Descriptions.Item>
             <Descriptions.Item label="Severity">
-              <Tag>{severityLabels[alert.severity]}</Tag>
+              <Tag>{severityPresentation[alert.severity].label}</Tag>
             </Descriptions.Item>
             <Descriptions.Item label="Status">
               <Select
