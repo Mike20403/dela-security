@@ -2,11 +2,16 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { act, renderHook, waitFor } from '@testing-library/react'
 import type { ReactNode } from 'react'
 import { describe, expect, it, vi } from 'vitest'
+import * as db from '../../../core/persistence/db'
 import type { SecurityAlert } from '../../../core/types/alerts'
 import { createTestQueryClient } from '../../../test/query-client'
 import { alertKeys } from '../api/alert-query-keys'
 import type { AlertsRepository } from '../api/alerts-repository'
 import { useAlertMutation } from './useAlertMutation'
+
+vi.mock('../../../core/persistence/db', () => ({
+  putAlertOverride: vi.fn().mockResolvedValue(undefined),
+}))
 
 const alert: SecurityAlert = {
   id: 'alert-1',
@@ -78,6 +83,20 @@ describe('useAlertMutation', () => {
       client.getQueryData<SecurityAlert[]>(alertKeys.list())?.[0]?.assignedTo,
     ).toBeUndefined()
     expect(invalidate).toHaveBeenCalledWith({ queryKey: alertKeys.list() })
+  })
+
+  it('persists the status change to Dexie once the mutation succeeds', async () => {
+    const update = vi.fn().mockResolvedValue({ ...alert, status: 'resolved' })
+    const { result } = setup(update)
+
+    act(() =>
+      result.current.mutate({ id: alert.id, changes: { status: 'resolved' } }),
+    )
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+    expect(db.putAlertOverride).toHaveBeenCalledWith(alert.id, {
+      status: 'resolved',
+    })
   })
 
   it('reconciles only requested server fields and preserves overlapping optimistic fields', async () => {

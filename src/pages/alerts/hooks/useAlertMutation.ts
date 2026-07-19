@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { putAlertOverride } from '../../../core/persistence/db'
 import type { SecurityAlert } from '../../../core/types/alerts'
 import { alertKeys } from '../api/alert-query-keys'
 import type { AlertsRepository, AlertUpdate } from '../api/alerts-repository'
@@ -65,6 +66,7 @@ export function useAlertMutation(
           return reconciled
         }),
       )
+      void putAlertOverride(updated.id, changes)
     },
     onSettled: () =>
       queryClient.invalidateQueries({ queryKey: alertKeys.list() }),

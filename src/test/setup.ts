@@ -1,6 +1,8 @@
 import '@testing-library/jest-dom/vitest'
+import 'fake-indexeddb/auto'
 import { cleanup } from '@testing-library/react'
 import { afterAll, afterEach, beforeAll } from 'vitest'
+import { alertOverridesDb } from '../core/persistence/db'
 import { resetTestAlertMock, server } from './msw-server'
 
 Object.defineProperty(window, 'matchMedia', {
@@ -23,6 +25,7 @@ afterEach(() => {
   cleanup()
   server.resetHandlers()
   resetTestAlertMock()
+  return alertOverridesDb.alertOverrides.clear()
 })
 
 afterAll(() => server.close())

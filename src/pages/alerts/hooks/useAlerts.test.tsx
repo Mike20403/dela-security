@@ -1,8 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook, waitFor } from '@testing-library/react'
 import type { ReactNode } from 'react'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { AppError } from '../../../core/errors/AppError'
+import {
+  alertOverridesDb,
+  putAlertOverride,
+} from '../../../core/persistence/db'
 import type { SecurityAlert } from '../../../core/types/alerts'
 import type { AlertsRepository } from '../api/alerts-repository'
 import { useAlerts } from './useAlerts.ts'
@@ -35,6 +39,10 @@ function createClient() {
 }
 
 describe('useAlerts', () => {
+  afterEach(async () => {
+    await alertOverridesDb.alertOverrides.clear()
+  })
+
   it('returns repository records with no provider coupling beyond QueryClient', async () => {
     const repository: AlertsRepository = {
       list: async () => seed.map((alert) => ({ ...alert })),
@@ -62,5 +70,19 @@ describe('useAlerts', () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true))
     expect(result.current.error).toBe(error)
+  })
+
+  it('hydrates persisted status overrides from Dexie into the network response', async () => {
+    await putAlertOverride('ALT-001', { status: 'resolved' })
+    const repository: AlertsRepository = {
+      list: async () => seed.map((alert) => ({ ...alert })),
+      update: async () => seed[0]!,
+    }
+    const { result } = renderHook(() => useAlerts(repository), {
+      wrapper: wrapper(createClient()),
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.data?.[0]?.status).toBe('resolved')
   })
 })
