@@ -44,17 +44,32 @@ export function AppShell({ children }: AppShellProps) {
       )}
       <aside
         id={sidebarId}
-        className={`bg-background-inverse fixed inset-y-0 left-0 z-40 flex flex-shrink-0 flex-col gap-md p-md transition-all lg:static lg:translate-x-0 ${
+        className={`bg-background-inverse fixed inset-y-0 left-0 z-40 flex flex-shrink-0 flex-col gap-md p-md transition-all lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full'
         } ${collapsed ? 'w-16' : 'w-56'}`}
       >
-        <div className="flex items-center gap-sm">
+        <div className="flex items-center justify-between gap-sm">
           <Logo size={28} />
           {!collapsed && (
-            <span className="text-foreground-on-inverse font-semibold">
+            <span className="text-foreground-on-inverse mr-auto whitespace-nowrap font-semibold">
               DELA Security
             </span>
           )}
+          <button
+            type="button"
+            aria-expanded={!collapsed}
+            onClick={() => setCollapsed((value) => !value)}
+            className="text-foreground-on-inverse flex flex-shrink-0 items-center rounded-md p-xs"
+          >
+            {collapsed ? (
+              <PanelLeftOpen size={18} aria-hidden="true" />
+            ) : (
+              <PanelLeftClose size={18} aria-hidden="true" />
+            )}
+            <span className="sr-only">
+              {collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            </span>
+          </button>
         </div>
         <nav aria-label="Primary" className="flex flex-col gap-xs">
           <NavLink
@@ -66,19 +81,6 @@ export function AppShell({ children }: AppShellProps) {
             {!collapsed && 'Alerts'}
           </NavLink>
         </nav>
-        <button
-          type="button"
-          aria-expanded={!collapsed}
-          onClick={() => setCollapsed((value) => !value)}
-          className="text-foreground-on-inverse mt-auto flex items-center gap-sm rounded-md px-sm py-xs text-sm font-medium"
-        >
-          {collapsed ? (
-            <PanelLeftOpen size={18} aria-hidden="true" />
-          ) : (
-            <PanelLeftClose size={18} aria-hidden="true" />
-          )}
-          {collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        </button>
       </aside>
       <button
         type="button"

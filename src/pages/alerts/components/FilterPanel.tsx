@@ -145,7 +145,6 @@ export function FilterPanel({
         {activeCount > 0 && (
           <Badge
             count={`${activeCount} active filter${activeCount === 1 ? '' : 's'}`}
-            color="blue"
           />
         )}
       </div>

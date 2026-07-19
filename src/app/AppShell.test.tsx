@@ -79,6 +79,25 @@ describe('AppShell', () => {
     expect(toggle.querySelector('svg')).toBeInTheDocument()
   })
 
+  it('places the collapse toggle in the header row next to the logo', () => {
+    renderShell()
+
+    const toggle = screen.getByRole('button', { name: /collapse sidebar/i })
+    const logo = screen.getByRole('img', { name: 'DELA Security logo' })
+    const header = logo.closest('div')
+
+    expect(header).toContainElement(toggle)
+  })
+
+  it('keeps the sidebar pinned to the viewport instead of scrolling with page content', () => {
+    renderShell()
+
+    const sidebar = screen.getByRole('navigation').closest('aside')
+    expect(sidebar?.className).toMatch(/lg:sticky/)
+    expect(sidebar?.className).toMatch(/lg:top-0/)
+    expect(sidebar?.className).toMatch(/lg:h-screen/)
+  })
+
   it('has a mobile menu button with correct aria attributes and accessible name', () => {
     renderShell()
 

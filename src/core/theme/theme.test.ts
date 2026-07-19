@@ -402,6 +402,15 @@ describe('Ant Design theme', () => {
       colorSuccess: systemTokens.color.feedback.success.foreground,
     })
   })
+
+  it('gives count badges the brand primary color instead of the danger/severity color', () => {
+    expect(antdTheme.components?.Badge?.colorError).toBe(
+      systemTokens.color.action.primary.background,
+    )
+    expect(antdTheme.components?.Badge?.colorError).not.toBe(
+      systemTokens.color.feedback.danger.foreground,
+    )
+  })
 })
 
 describe('CSS integration', () => {

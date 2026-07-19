@@ -39,4 +39,10 @@ export const antdTheme = {
     screenLG: toPixels(systemTokens.breakpoint.lg),
     screenXL: toPixels(systemTokens.breakpoint.xl),
   },
+  components: {
+    Badge: {
+      colorError: systemTokens.color.action.primary.background,
+      colorBgContainer: systemTokens.color.foreground.inverse,
+    },
+  },
 } satisfies ThemeConfig
