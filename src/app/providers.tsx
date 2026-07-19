@@ -1,3 +1,4 @@
+import { StyleProvider } from '@ant-design/cssinjs'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { App as AntApp, ConfigProvider } from 'antd'
 import { RouterProvider, type RouterProviderProps } from 'react-router-dom'
@@ -15,16 +16,18 @@ export function ApplicationProviders({
 }: ApplicationProvidersProps) {
   return (
     <AppErrorBoundary>
-      <ConfigProvider theme={antdTheme}>
-        <AntApp>
-          <QueryClientProvider client={queryClient}>
-            <RouterProvider
-              router={router}
-              future={{ v7_startTransition: true }}
-            />
-          </QueryClientProvider>
-        </AntApp>
-      </ConfigProvider>
+      <StyleProvider layer>
+        <ConfigProvider theme={antdTheme}>
+          <AntApp>
+            <QueryClientProvider client={queryClient}>
+              <RouterProvider
+                router={router}
+                future={{ v7_startTransition: true }}
+              />
+            </QueryClientProvider>
+          </AntApp>
+        </ConfigProvider>
+      </StyleProvider>
     </AppErrorBoundary>
   )
 }
