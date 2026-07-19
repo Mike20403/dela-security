@@ -138,7 +138,7 @@ describe('AlertsPage', () => {
     ).toBeVisible()
     expect(screen.getByLabelText('Total alerts')).toHaveTextContent('32')
     expect(screen.getByRole('tab', { name: 'All 32' })).toBeVisible()
-    expect(screen.queryByRole('tab', { name: /Suppressed/i })).toBeNull()
+    expect(screen.getByRole('tab', { name: 'Suppressed 8' })).toBeVisible()
 
     await userEvent.click(screen.getByRole('tab', { name: 'Open 8' }))
     expect(screen.getByLabelText('Total alerts')).toHaveTextContent('8')

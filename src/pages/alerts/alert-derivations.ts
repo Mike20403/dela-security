@@ -1,6 +1,6 @@
 import type { AlertStatus, SecurityAlert } from '../../core/types/alerts'
 
-export type AlertTabId = 'all' | Exclude<AlertStatus, 'suppressed'>
+export type AlertTabId = 'all' | AlertStatus
 
 export function summarizeAlerts(alerts: readonly SecurityAlert[]) {
   return alerts.reduce(
@@ -19,10 +19,10 @@ export function countAlertsByStatus(alerts: readonly SecurityAlert[]) {
   return alerts.reduce(
     (counts, alert) => {
       counts.all++
-      if (alert.status !== 'suppressed') counts[alert.status]++
+      counts[alert.status]++
       return counts
     },
-    { all: 0, open: 0, in_review: 0, resolved: 0 },
+    { all: 0, open: 0, in_review: 0, resolved: 0, suppressed: 0 },
   )
 }
 

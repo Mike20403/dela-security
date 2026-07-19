@@ -24,12 +24,13 @@ describe('alert derivations', () => {
     })
   })
 
-  it('counts all statuses and filters tabs without losing suppressed alerts from All', () => {
+  it('counts all statuses including suppressed and filters tabs without losing suppressed alerts from All', () => {
     expect(countAlertsByStatus(alerts)).toEqual({
       all: 4,
       open: 1,
       in_review: 1,
       resolved: 1,
+      suppressed: 1,
     })
     expect(filterAlertsByTab(alerts, 'all')).toHaveLength(4)
     expect(filterAlertsByTab(alerts, 'open').map(({ id }) => id)).toEqual(['1'])

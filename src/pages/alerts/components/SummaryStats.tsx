@@ -7,26 +7,25 @@ interface SummaryStatsProps {
   alerts: readonly SecurityAlert[]
 }
 
-const stats: readonly {
-  key: 'total' | 'critical' | 'high' | 'mediumLow'
+const chips: readonly {
+  key: 'critical' | 'high' | 'mediumLow'
   label: string
-  borderClass?: string
+  className: string
 }[] = [
-  { key: 'total', label: 'Total alerts' },
   {
     key: 'critical',
     label: severityPresentation.critical.label,
-    borderClass: `border-t-2 ${severityPresentation.critical.borderTopClassName}`,
+    className: severityPresentation.critical.className,
   },
   {
     key: 'high',
     label: severityPresentation.high.label,
-    borderClass: `border-t-2 ${severityPresentation.high.borderTopClassName}`,
+    className: severityPresentation.high.className,
   },
   {
     key: 'mediumLow',
     label: 'Medium / Low',
-    borderClass: `border-t-2 ${severityPresentation.medium.borderTopClassName}`,
+    className: severityPresentation.medium.className,
   },
 ]
 
@@ -35,21 +34,32 @@ export function SummaryStats({ alerts }: SummaryStatsProps) {
 
   return (
     <section
-      className="grid grid-cols-2 gap-md lg:grid-cols-4"
+      className="flex flex-wrap items-center gap-sm"
       aria-label="Alert summary"
     >
-      {stats.map(({ key, label, borderClass }) => (
-        <article
-          key={key}
-          aria-label={label}
-          className={cn('bg-background-surface rounded-md p-sm', borderClass)}
-        >
-          <p className="text-foreground-muted m-0 text-xs">{label}</p>
-          <strong className="text-foreground-default font-bold mt-xs block text-2xl">
-            {summary[key]}
-          </strong>
-        </article>
-      ))}
+      <span className="text-foreground-muted text-xs" aria-label="Total alerts">
+        Total: {summary.total}
+      </span>
+      <ul className="m-0 flex list-none flex-wrap items-center gap-sm p-0">
+        {chips.map(({ key, label, className }) => (
+          <li
+            key={key}
+            aria-label={`${label} ${summary[key]}`}
+            className={cn(
+              'inline-flex items-center gap-xs rounded-full px-sm py-xs text-xs',
+              className,
+            )}
+          >
+            <span
+              aria-hidden="true"
+              className="h-1.5 w-1.5 rounded-full bg-current"
+            />
+            <span>
+              {label} {summary[key]}
+            </span>
+          </li>
+        ))}
+      </ul>
     </section>
   )
 }

@@ -17,23 +17,43 @@ const makeAlert = (severity: SecurityAlert['severity']): SecurityAlert => ({
 })
 
 describe('SummaryStats', () => {
-  it('gives the value stronger visual weight than the label', () => {
-    render(<SummaryStats alerts={[makeAlert('critical')]} />)
+  it('renders each severity as a compact chip with an accessible label+count name', () => {
+    render(
+      <SummaryStats
+        alerts={[
+          makeAlert('critical'),
+          makeAlert('critical'),
+          makeAlert('high'),
+        ]}
+      />,
+    )
 
-    const tile = screen.getByLabelText('Total alerts')
-    const value = within(tile).getByText('1')
-    const label = within(tile).getByText('Total alerts')
-
-    expect(value.className).toMatch(/text-2xl/)
-    expect(value.className).toMatch(/font-bold/)
-    expect(label.className).toMatch(/text-foreground-muted/)
-    expect(label.className).toMatch(/text-xs|text-sm/)
+    const region = screen.getByLabelText('Alert summary')
+    expect(within(region).getByText('Total: 3')).toBeVisible()
+    expect(
+      within(region).getByRole('listitem', { name: 'Critical 2' }),
+    ).toBeVisible()
+    expect(
+      within(region).getByRole('listitem', { name: 'High 1' }),
+    ).toBeVisible()
+    expect(
+      within(region).getByRole('listitem', { name: 'Medium / Low 0' }),
+    ).toBeVisible()
   })
 
-  it('keeps semantic article grouping without heavy card borders on every tile', () => {
+  it('uses severityPresentation classes and never renders card-tile visual language', () => {
     render(<SummaryStats alerts={[makeAlert('critical')]} />)
 
-    const total = screen.getByLabelText('Total alerts')
-    expect(total.className).not.toMatch(/shadow-sm/)
+    const region = screen.getByLabelText('Alert summary')
+    expect(region.className).not.toMatch(/grid/)
+    expect(region.innerHTML).not.toMatch(/border-t-2/)
+    expect(region.innerHTML).not.toMatch(/shadow-sm/)
+
+    const critical = within(region).getByRole('listitem', {
+      name: 'Critical 1',
+    })
+    expect(critical.className).toMatch(/bg-severity-surface-critical/)
+    expect(critical.className).not.toMatch(/border-t-2/)
+    expect(critical.className).not.toMatch(/shadow-sm/)
   })
 })

@@ -90,6 +90,11 @@ export function AlertsPage() {
       label: statusPresentation.resolved.label,
       badge: counts.resolved,
     },
+    {
+      id: 'suppressed',
+      label: statusPresentation.suppressed.label,
+      badge: counts.suppressed,
+    },
   ]
 
   return (
