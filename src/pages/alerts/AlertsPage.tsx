@@ -22,6 +22,18 @@ import { useAlertFilters } from './hooks/useAlertFilters'
 import { useAlertMutation } from './hooks/useAlertMutation'
 
 const emptyAlerts: never[] = []
+const monitoredDirectory = 'corp.example.com'
+
+const lastUpdatedFormatter = new Intl.DateTimeFormat('en-US', {
+  dateStyle: 'medium',
+  timeStyle: 'short',
+})
+
+function formatLastUpdated(timestamp: number) {
+  return timestamp
+    ? `Updated ${lastUpdatedFormatter.format(new Date(timestamp))}`
+    : 'Not yet updated'
+}
 
 export function AlertsPage() {
   const query = useAlerts()
@@ -31,6 +43,7 @@ export function AlertsPage() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const openerRef = useRef<HTMLElement | null>(null)
   const pageHeadingRef = useRef<HTMLHeadingElement>(null)
+  const mainContentRef = useRef<HTMLElement>(null)
   const filterState = useAlertFilters(() => setActiveTab('all'))
   const alerts = query.data ?? emptyAlerts
   const filteredAlerts = useMemo(
@@ -81,85 +94,137 @@ export function AlertsPage() {
   ]
 
   return (
-    <main className="mx-auto max-w-[100rem] p-md lg:p-xl">
-      <header className="mb-lg flex flex-wrap items-end justify-between gap-md">
-        <div>
-          <p className="text-foreground-muted m-0 text-sm font-medium">
-            Security operations
-          </p>
-          <h1
-            ref={pageHeadingRef}
-            tabIndex={-1}
-            className="text-foreground-default m-0 mt-xs text-xl font-semibold"
-          >
-            Security alerts
-          </h1>
-        </div>
-        <p className="text-foreground-muted m-0 text-sm">
-          Directory threat monitoring
-        </p>
+    <>
+      <a
+        href="#main-content"
+        onClick={(event) => {
+          event.preventDefault()
+          mainContentRef.current?.focus()
+        }}
+        className="bg-action-primary text-foreground-inverse focus:not-sr-only sr-only fixed left-md top-md z-50 rounded-md px-md py-sm font-medium"
+      >
+        Skip to main content
+      </a>
+      <header
+        role="banner"
+        className="border-border-default bg-background-surface flex flex-wrap items-center justify-between gap-md border-b px-md py-sm lg:px-xl"
+      >
+        <h1 className="text-foreground-default m-0 text-base font-semibold">
+          DELA Security
+        </h1>
+        <p className="text-foreground-muted m-0 text-sm">Security Operations</p>
       </header>
+      <main
+        id="main-content"
+        ref={mainContentRef}
+        tabIndex={-1}
+        className="mx-auto max-w-[100rem] p-md lg:p-xl"
+      >
+        <div className="mb-md flex flex-wrap items-center justify-between gap-sm text-sm">
+          <p
+            className="text-foreground-muted m-0"
+            aria-label="Monitored directory"
+          >
+            Monitoring {monitoredDirectory}
+            {import.meta.env.DEV && (
+              <span className="text-foreground-muted">
+                {' '}
+                · Development (mock data)
+              </span>
+            )}
+          </p>
+          <div className="flex items-center gap-sm">
+            <p className="text-foreground-muted m-0" aria-label="Last updated">
+              {formatLastUpdated(query.dataUpdatedAt)}
+            </p>
+            <button
+              type="button"
+              className="border-border-default text-foreground-default rounded-md border px-sm py-xs text-sm font-medium"
+              onClick={() => void query.refetch()}
+            >
+              Refresh
+            </button>
+          </div>
+        </div>
+        <div className="mb-lg flex flex-wrap items-end justify-between gap-md">
+          <div>
+            <p className="text-foreground-muted m-0 text-sm font-medium">
+              Security operations
+            </p>
+            <h2
+              ref={pageHeadingRef}
+              tabIndex={-1}
+              className="text-foreground-default m-0 mt-xs text-xl font-semibold"
+            >
+              Security alerts
+            </h2>
+          </div>
+          <p className="text-foreground-muted m-0 text-sm">
+            Directory threat monitoring
+          </p>
+        </div>
 
-      {query.isPending ? (
-        <AlertsTableSkeleton />
-      ) : query.isError && !query.data ? (
-        <section className="border-border-default bg-background-surface rounded-md border">
-          <Result
-            status="error"
-            title="Unable to load security alerts"
-            subTitle="Alert data is unavailable. Try the request again."
-            extra={
-              <button
-                type="button"
-                className="bg-action-primary text-foreground-inverse hover:bg-action-hover rounded-md border-0 px-md py-sm font-medium"
-                onClick={() => void query.refetch()}
-              >
-                Retry
-              </button>
-            }
-          />
-        </section>
-      ) : (
-        <div className="space-y-lg">
-          {query.isError && (
-            <Alert
-              type="warning"
-              showIcon
-              message="Showing cached alerts because refresh failed."
-              action={
-                <Button size="small" onClick={() => void query.refetch()}>
-                  Retry refresh
-                </Button>
+        {query.isPending ? (
+          <AlertsTableSkeleton />
+        ) : query.isError && !query.data ? (
+          <section className="border-border-default bg-background-surface rounded-md border">
+            <Result
+              status="error"
+              title="Unable to load security alerts"
+              subTitle="Alert data is unavailable. Try the request again."
+              extra={
+                <button
+                  type="button"
+                  className="bg-action-primary text-foreground-inverse hover:bg-action-hover rounded-md border-0 px-md py-sm font-medium"
+                  onClick={() => void query.refetch()}
+                >
+                  Retry
+                </button>
               }
             />
-          )}
-          <FilterPanel
-            form={filterState.form}
-            filters={filterState.filters}
-            categories={categories}
-            onApply={() => void filterState.apply()}
-            onReset={filterState.reset}
-          />
-          <SummaryStats alerts={visibleAlerts} />
-          <section className="border-border-default bg-background-surface rounded-md border px-md shadow-sm">
-            <TabNavigation
-              items={tabs}
-              activeId={activeTab}
-              onChange={setActiveTab}
-            />
-            <AlertsTable alerts={visibleAlerts} onSelectAlert={openDrawer} />
           </section>
-          {drawerAlert && (
-            <MutatingAlertDrawer
-              alert={selectedAlert ?? drawerAlert}
-              open={effectiveDrawerOpen}
-              onClose={() => setDrawerOpen(false)}
-              onAfterOpenChange={finishDrawerTransition}
+        ) : (
+          <div className="space-y-lg">
+            {query.isError && (
+              <Alert
+                type="warning"
+                showIcon
+                message="Showing cached alerts because refresh failed."
+                action={
+                  <Button size="small" onClick={() => void query.refetch()}>
+                    Retry refresh
+                  </Button>
+                }
+              />
+            )}
+            <FilterPanel
+              form={filterState.form}
+              filters={filterState.filters}
+              categories={categories}
+              onApply={() => void filterState.apply()}
+              onReset={filterState.reset}
             />
-          )}
-        </div>
-      )}
-    </main>
+            <SummaryStats alerts={visibleAlerts} />
+            <section className="border-border-default bg-background-surface rounded-md border px-md shadow-sm">
+              <TabNavigation
+                items={tabs}
+                activeId={activeTab}
+                onChange={setActiveTab}
+              />
+              <AlertsTable alerts={visibleAlerts} onSelectAlert={openDrawer} />
+            </section>
+            {drawerAlert && (
+              <MutatingAlertDrawer
+                alert={selectedAlert ?? drawerAlert}
+                open={effectiveDrawerOpen}
+                onClose={() => setDrawerOpen(false)}
+                onAfterOpenChange={finishDrawerTransition}
+              />
+            )}
+          </div>
+        )}
+      </main>
+    </>
   )
 }
 

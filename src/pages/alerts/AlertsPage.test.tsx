@@ -13,6 +13,64 @@ const mockedUseAlerts = vi.mocked(useAlerts)
 describe('AlertsPage', () => {
   beforeEach(() => mockedUseAlerts.mockReset())
 
+  it('shows product identity, workspace landmarks, and a skip link', () => {
+    mockedUseAlerts.mockReturnValue({
+      isPending: false,
+      isError: false,
+      data: mockAlerts,
+      dataUpdatedAt: Date.parse('2026-07-19T10:00:00Z'),
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useAlerts>)
+    render(<AlertsPage />)
+
+    expect(screen.getByRole('banner')).toBeVisible()
+    expect(screen.getByRole('main')).toBeVisible()
+    expect(
+      screen.getByRole('heading', { name: 'DELA Security', level: 1 }),
+    ).toBeVisible()
+    expect(screen.getByText('Security Operations')).toBeVisible()
+
+    const skipLink = screen.getByRole('link', { name: 'Skip to main content' })
+    expect(skipLink).toHaveAttribute('href', '#main-content')
+  })
+
+  it('moves focus to main content when the skip link is activated', async () => {
+    mockedUseAlerts.mockReturnValue({
+      isPending: false,
+      isError: false,
+      data: mockAlerts,
+      dataUpdatedAt: Date.parse('2026-07-19T10:00:00Z'),
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useAlerts>)
+    render(<AlertsPage />)
+
+    await userEvent.click(
+      screen.getByRole('link', { name: 'Skip to main content' }),
+    )
+    expect(screen.getByRole('main')).toHaveFocus()
+  })
+
+  it('shows monitored directory, mock-data status, last-updated time, and refresh action', async () => {
+    const refetch = vi.fn()
+    mockedUseAlerts.mockReturnValue({
+      isPending: false,
+      isError: false,
+      data: mockAlerts,
+      dataUpdatedAt: Date.parse('2026-07-19T10:00:00Z'),
+      refetch,
+    } as unknown as ReturnType<typeof useAlerts>)
+    render(<AlertsPage />)
+
+    expect(screen.getByLabelText('Monitored directory')).toHaveTextContent(
+      /corp\.example\.com/,
+    )
+    expect(screen.getByText(/mock data/i)).toBeVisible()
+    expect(screen.getByLabelText('Last updated')).toHaveTextContent(/Updated/i)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Refresh' }))
+    expect(refetch).toHaveBeenCalledOnce()
+  })
+
   it('shows a meaningful table-shaped initial skeleton', () => {
     mockedUseAlerts.mockReturnValue({ isPending: true } as ReturnType<
       typeof useAlerts
