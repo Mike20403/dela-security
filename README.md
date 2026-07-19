@@ -2,6 +2,8 @@
 
 A security-operations product dashboard for triaging directory-security alerts. A collapsible sidebar shell with a real navigation landmark, a distinct brand palette, and `/alerts` provide reactive status summaries, validated filters, an accessible alert table with a pinned action column, and detail actions with resilient loading/error states.
 
+![Uploading Screenshot 2026-07-19 at 21.42.40.png…]()
+
 ## Prerequisites and setup
 
 - Node.js 22.12 or newer (`.nvmrc` pins 22.12.0)
