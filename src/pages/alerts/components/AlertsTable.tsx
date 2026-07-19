@@ -25,6 +25,7 @@ const statusLabels: Record<AlertStatus, string> = {
   resolved: 'Resolved',
   suppressed: 'Suppressed',
 }
+// ponytail: Phase 3 replaces these with typed alert presentation metadata; classes are static CSS (--dela-legacy-alert-*), not inline style.
 const severityClasses: Record<AlertSeverity, string> = {
   critical: 'text-severity-critical bg-severity-surface-critical',
   high: 'text-severity-high bg-severity-surface-high',

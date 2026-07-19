@@ -5,11 +5,11 @@ export function AlertsTableSkeleton() {
     <section
       role="status"
       aria-label="Loading security alerts"
-      className="border-border-default bg-surface-container overflow-hidden rounded-md border"
+      className="border-border-default bg-background-surface overflow-hidden rounded-md border"
     >
       <span className="sr-only">Loading security alerts</span>
       <div
-        className="bg-surface-muted grid grid-cols-4 gap-lg p-md"
+        className="bg-background-subtle grid grid-cols-4 gap-lg p-md"
         aria-hidden="true"
       >
         {Array.from({ length: 4 }, (_, index) => (
@@ -20,7 +20,7 @@ export function AlertsTableSkeleton() {
         <div
           key={index}
           data-testid="alert-skeleton-row"
-          className="border-border-subtle grid grid-cols-4 gap-lg border-t p-md"
+          className="border-border-default grid grid-cols-4 gap-lg border-t p-md"
           aria-hidden="true"
         >
           {Array.from({ length: 4 }, (_, cell) => (

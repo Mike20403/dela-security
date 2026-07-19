@@ -5,9 +5,9 @@
 
 @layer base {
   :root {
-    color: var(--app-color-text-primary);
-    background: var(--app-color-surface-canvas);
-    font-family: var(--app-font-sans);
+    color: var(--dela-sys-color-foreground-default);
+    background: var(--dela-sys-color-background-canvas);
+    font-family: var(--dela-sys-typography-body-family);
     font-synthesis: none;
     text-rendering: optimizeLegibility;
   }
@@ -19,8 +19,8 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--app-color-focus-ring);
-    outline-offset: var(--app-focus-offset);
+    outline: 2px solid var(--dela-sys-color-focus-ring);
+    outline-offset: var(--dela-sys-focus-offset-width);
   }
 }
 

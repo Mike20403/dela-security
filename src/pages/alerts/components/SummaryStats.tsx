@@ -42,12 +42,12 @@ export function SummaryStats({ alerts }: SummaryStatsProps) {
           key={key}
           aria-label={label}
           className={cn(
-            'border-border-default bg-surface-container rounded-md border p-md shadow-sm',
+            'border-border-default bg-background-surface rounded-md border p-md shadow-sm',
             borderClass,
           )}
         >
-          <p className="text-text-secondary m-0 text-sm">{label}</p>
-          <strong className="text-text-primary mt-xs block text-xl">
+          <p className="text-foreground-muted m-0 text-sm">{label}</p>
+          <strong className="text-foreground-default mt-xs block text-xl">
             {summary[key]}
           </strong>
         </article>

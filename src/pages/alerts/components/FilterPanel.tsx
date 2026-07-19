@@ -34,7 +34,7 @@ export function FilterPanel({
 
   return (
     <form
-      className="border-border-default bg-surface-container grid w-full min-w-0 grid-cols-1 items-end gap-sm rounded-md border p-md sm:grid-cols-2 lg:grid-cols-[minmax(14rem,1fr)_12rem_minmax(16rem,20rem)] 2xl:grid-cols-[minmax(14rem,1fr)_12rem_minmax(16rem,20rem)_minmax(20rem,auto)_auto]"
+      className="border-border-default bg-background-surface grid w-full min-w-0 grid-cols-1 items-end gap-sm rounded-md border p-md sm:grid-cols-2 lg:grid-cols-[minmax(14rem,1fr)_12rem_minmax(16rem,20rem)] 2xl:grid-cols-[minmax(14rem,1fr)_12rem_minmax(16rem,20rem)_minmax(20rem,auto)_auto]"
       aria-label="Alert filters"
       onSubmit={(event) => {
         event.preventDefault()
@@ -42,7 +42,7 @@ export function FilterPanel({
       }}
     >
       <label className="w-full min-w-0 text-sm sm:col-span-2 lg:col-span-1">
-        <span className="text-text-secondary mb-xs block">Search</span>
+        <span className="text-foreground-muted mb-xs block">Search</span>
         <Controller
           name="search"
           control={form.control}
@@ -58,7 +58,7 @@ export function FilterPanel({
         />
       </label>
       <label className="w-full min-w-0 text-sm sm:min-w-48">
-        <span className="text-text-secondary mb-xs block">Severity</span>
+        <span className="text-foreground-muted mb-xs block">Severity</span>
         <Controller
           name="severities"
           control={form.control}
@@ -76,7 +76,7 @@ export function FilterPanel({
         />
       </label>
       <label className="w-full min-w-0 text-sm sm:min-w-64">
-        <span className="text-text-secondary mb-xs block">Category</span>
+        <span className="text-foreground-muted mb-xs block">Category</span>
         <Controller
           name="categories"
           control={form.control}
@@ -94,7 +94,7 @@ export function FilterPanel({
         />
       </label>
       <label className="w-full min-w-0 text-sm sm:col-span-2 lg:col-span-1">
-        <span className="text-text-secondary mb-xs block">Detected date</span>
+        <span className="text-foreground-muted mb-xs block">Detected date</span>
         <Controller
           name="dateRange"
           control={form.control}

@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { antdTheme } from './antd-theme.ts'
+import { legacyAlertTokenAdapter } from './internal/legacy-alert-compat.ts'
 import { referenceTokens } from './internal/reference-tokens.ts'
 import * as themeExports from './tokens.ts'
 import { publicSystemCssVariables, systemTokens } from './tokens.ts'
@@ -306,20 +307,46 @@ describe('Ant Design theme', () => {
 })
 
 describe('CSS integration', () => {
+  it('defines every public system CSS variable with its exact system value', () => {
+    const tokenCss = readStyle('tokens.css').replace(/\s+/g, ' ')
+
+    for (const [name, value] of Object.entries(publicSystemCssVariables)) {
+      expect(tokenCss, `${name} missing or mismatched`).toContain(
+        `${name}: ${String(value).replace(/\s+/g, ' ')}`,
+      )
+    }
+  })
+
   it.each([
-    ['--spacing-xs', '--app-spacing-xs'],
-    ['--text-sm', '--app-font-size-sm'],
-    ['--font-weight-semibold', '--app-font-weight-semibold'],
-    ['--leading-normal', '--app-line-height-normal'],
-    [
-      '--color-severity-surface-critical',
-      '--app-color-severity-surface-critical',
-    ],
-    ['--color-status-surface-resolved', '--app-color-status-surface-resolved'],
-    ['transition-duration', '--app-motion-duration-fast'],
-  ])('exposes Tailwind namespace %s', (tailwindName, appName) => {
+    ['--spacing-xs', '--dela-sys-spacing-compact'],
+    ['--spacing-sm', '--dela-sys-spacing-tight'],
+    ['--spacing-md', '--dela-sys-spacing-default'],
+    ['--spacing-lg', '--dela-sys-spacing-spacious'],
+    ['--text-sm', '--dela-sys-typography-body-size'],
+    ['--text-xl', '--dela-sys-typography-heading-size'],
+    ['--font-weight-semibold', '--dela-sys-typography-heading-weight'],
+    ['--leading-normal', '--dela-sys-typography-body-line-height'],
+    ['--radius-sm', '--dela-sys-radius-small'],
+    ['--radius-md', '--dela-sys-radius-medium'],
+    ['--radius-lg', '--dela-sys-radius-large'],
+    ['--shadow-sm', '--dela-sys-elevation-surface'],
+    ['--shadow-md', '--dela-sys-elevation-overlay'],
+    ['--ease-standard', '--dela-sys-motion-easing-standard'],
+    ['--color-background-surface', '--dela-sys-color-background-surface'],
+    ['--color-background-subtle', '--dela-sys-color-background-subtle'],
+    ['--color-foreground-default', '--dela-sys-color-foreground-default'],
+    ['--color-foreground-muted', '--dela-sys-color-foreground-muted'],
+    ['--color-foreground-inverse', '--dela-sys-color-foreground-inverse'],
+    ['--color-border-default', '--dela-sys-color-border-default'],
+    ['--color-border-subtle', '--dela-sys-color-border-subtle'],
+    ['--color-action-primary', '--dela-sys-color-action-primary-background'],
+    ['--color-action-hover', '--dela-sys-color-action-primary-hover'],
+    ['--color-action-subtle', '--dela-sys-color-selection-background'],
+    ['--color-focus-ring', '--dela-sys-color-focus-ring'],
+    ['--color-focus-offset', '--dela-sys-color-focus-offset'],
+  ])('exposes Tailwind namespace %s', (tailwindName, delaName) => {
     expect(readStyle('tokens.css')).toContain(
-      `${tailwindName}: var(${appName})`,
+      `${tailwindName}: var(${delaName})`,
     )
   })
 
@@ -339,8 +366,76 @@ describe('CSS integration', () => {
       '@layer theme, base, antd, components, utilities',
     )
     expect(globalCss).toContain(':focus-visible')
-    expect(globalCss).toContain('outline-offset: var(--app-focus-offset)')
+    expect(globalCss).toContain(
+      'outline-offset: var(--dela-sys-focus-offset-width)',
+    )
     expect(globalCss).toContain('@media (prefers-reduced-motion: reduce)')
     expect(globalCss).not.toMatch(/\.ant-[\w-]+/)
+  })
+
+  it('never uses legacy --app-* variable names', () => {
+    expect(readStyle('tokens.css')).not.toMatch(/--app-/)
+    expect(readStyle('global.css')).not.toMatch(/--app-/)
+  })
+
+  it('exposes alert severity/status classes as static CSS, not inline style', () => {
+    const tokenCss = readStyle('tokens.css')
+
+    expect(tokenCss).toContain('ponytail:')
+    expect(tokenCss).toMatch(/Phase ?3/)
+
+    for (const name of ['critical', 'high', 'medium', 'low']) {
+      expect(tokenCss).toContain(`--dela-legacy-alert-severity-${name}`)
+      expect(tokenCss).toContain(`--dela-legacy-alert-severity-surface-${name}`)
+      expect(tokenCss).toMatch(new RegExp(`@utility text-severity-${name} \\{`))
+      expect(tokenCss).toMatch(
+        new RegExp(`@utility bg-severity-surface-${name} \\{`),
+      )
+      expect(tokenCss).toMatch(
+        new RegExp(`@utility border-t-severity-${name} \\{`),
+      )
+    }
+
+    for (const name of ['new', 'investigating', 'resolved', 'dismissed']) {
+      expect(tokenCss).toContain(`--dela-legacy-alert-status-${name}`)
+      expect(tokenCss).toContain(`--dela-legacy-alert-status-surface-${name}`)
+      expect(tokenCss).toMatch(new RegExp(`@utility text-status-${name} \\{`))
+      expect(tokenCss).toMatch(
+        new RegExp(`@utility bg-status-surface-${name} \\{`),
+      )
+    }
+  })
+
+  it.each(['critical', 'high', 'medium', 'low'] as const)(
+    '%s severity foreground/background pair meets WCAG contrast',
+    (name) => {
+      const foreground = (
+        legacyAlertTokenAdapter.severity as Record<string, string>
+      )[name]!
+      const background = (
+        legacyAlertTokenAdapter.severitySurface as Record<string, string>
+      )[name]!
+      expect(contrast(foreground, background)).toBeGreaterThanOrEqual(4.5)
+    },
+  )
+
+  it.each(['new', 'investigating', 'resolved', 'dismissed'] as const)(
+    '%s status foreground/background pair meets WCAG contrast',
+    (name) => {
+      const foreground = (
+        legacyAlertTokenAdapter.status as Record<string, string>
+      )[name]!
+      const background = (
+        legacyAlertTokenAdapter.statusSurface as Record<string, string>
+      )[name]!
+      expect(contrast(foreground, background)).toBeGreaterThanOrEqual(4.5)
+    },
+  )
+})
+
+describe('runtime token application removal', () => {
+  it('does not import legacy runtime CSS injection from main.tsx', () => {
+    const main = readFileSync(`${process.cwd()}/src/main.tsx`, 'utf8')
+    expect(main).not.toMatch(/applyCssVariables|legacy-theme-compat/)
   })
 })

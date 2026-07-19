@@ -75,18 +75,18 @@ export function AlertsPage() {
     <main className="mx-auto max-w-[100rem] p-md lg:p-xl">
       <header className="mb-lg flex flex-wrap items-end justify-between gap-md">
         <div>
-          <p className="text-text-secondary m-0 text-sm font-medium">
+          <p className="text-foreground-muted m-0 text-sm font-medium">
             Security operations
           </p>
           <h1
             ref={pageHeadingRef}
             tabIndex={-1}
-            className="text-text-primary m-0 mt-xs text-xl font-semibold"
+            className="text-foreground-default m-0 mt-xs text-xl font-semibold"
           >
             Security alerts
           </h1>
         </div>
-        <p className="text-text-secondary m-0 text-sm">
+        <p className="text-foreground-muted m-0 text-sm">
           Directory threat monitoring
         </p>
       </header>
@@ -94,7 +94,7 @@ export function AlertsPage() {
       {query.isPending ? (
         <AlertsTableSkeleton />
       ) : query.isError && !query.data ? (
-        <section className="border-border-default bg-surface-container rounded-md border">
+        <section className="border-border-default bg-background-surface rounded-md border">
           <Result
             status="error"
             title="Unable to load security alerts"
@@ -102,7 +102,7 @@ export function AlertsPage() {
             extra={
               <button
                 type="button"
-                className="bg-action-primary text-text-inverse hover:bg-action-hover rounded-md border-0 px-md py-sm font-medium"
+                className="bg-action-primary text-foreground-inverse hover:bg-action-hover rounded-md border-0 px-md py-sm font-medium"
                 onClick={() => void query.refetch()}
               >
                 Retry
@@ -132,7 +132,7 @@ export function AlertsPage() {
             onReset={filterState.reset}
           />
           <SummaryStats alerts={visibleAlerts} />
-          <section className="border-border-default bg-surface-container rounded-md border px-md shadow-sm">
+          <section className="border-border-default bg-background-surface rounded-md border px-md shadow-sm">
             <TabNavigation
               items={tabs}
               activeId={activeTab}

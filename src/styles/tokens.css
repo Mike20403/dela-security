@@ -1,93 +1,194 @@
-@theme inline {
-  --color-surface-canvas: var(--app-color-surface-canvas);
-  --color-surface-container: var(--app-color-surface-container);
-  --color-surface-muted: var(--app-color-surface-muted);
-  --color-surface-elevated: var(--app-color-surface-elevated);
-  --color-text-primary: var(--app-color-text-primary);
-  --color-text-strong: var(--app-color-text-strong);
-  --color-text-secondary: var(--app-color-text-secondary);
-  --color-text-inverse: var(--app-color-text-inverse);
-  --color-text-disabled: var(--app-color-text-disabled);
-  --color-border-default: var(--app-color-border-default);
-  --color-border-subtle: var(--app-color-border-subtle);
-  --color-border-strong: var(--app-color-border-strong);
-  --color-focus-ring: var(--app-color-focus-ring);
-  --color-focus-offset: var(--app-color-focus-offset);
-  --color-action-primary: var(--app-color-action-primary);
-  --color-action-hover: var(--app-color-action-hover);
-  --color-action-subtle: var(--app-color-action-subtle);
-  --color-severity-critical: var(--app-color-severity-critical);
-  --color-severity-high: var(--app-color-severity-high);
-  --color-severity-medium: var(--app-color-severity-medium);
-  --color-severity-low: var(--app-color-severity-low);
-  --color-severity-surface-critical: var(--app-color-severity-surface-critical);
-  --color-severity-surface-high: var(--app-color-severity-surface-high);
-  --color-severity-surface-medium: var(--app-color-severity-surface-medium);
-  --color-severity-surface-low: var(--app-color-severity-surface-low);
-  --color-status-new: var(--app-color-status-new);
-  --color-status-investigating: var(--app-color-status-investigating);
-  --color-status-resolved: var(--app-color-status-resolved);
-  --color-status-dismissed: var(--app-color-status-dismissed);
-  --color-status-surface-new: var(--app-color-status-surface-new);
-  --color-status-surface-investigating: var(
-    --app-color-status-surface-investigating
-  );
-  --color-status-surface-resolved: var(--app-color-status-surface-resolved);
-  --color-status-surface-dismissed: var(--app-color-status-surface-dismissed);
-  --font-sans: var(--app-font-sans);
-  --font-mono: var(--app-font-mono);
-  --text-xs: var(--app-font-size-xs);
-  --text-sm: var(--app-font-size-sm);
-  --text-base: var(--app-font-size-base);
-  --text-lg: var(--app-font-size-lg);
-  --text-xl: var(--app-font-size-xl);
-  --font-weight-normal: var(--app-font-weight-normal);
-  --font-weight-medium: var(--app-font-weight-medium);
-  --font-weight-semibold: var(--app-font-weight-semibold);
-  --leading-normal: var(--app-line-height-normal);
-  --spacing-xs: var(--app-spacing-xs);
-  --spacing-sm: var(--app-spacing-sm);
-  --spacing-md: var(--app-spacing-md);
-  --spacing-lg: var(--app-spacing-lg);
-  --spacing-xl: var(--app-spacing-xl);
-  --radius-sm: var(--app-radius-sm);
-  --radius-md: var(--app-radius-md);
-  --radius-lg: var(--app-radius-lg);
-  --shadow-sm: var(--app-shadow-sm);
-  --shadow-md: var(--app-shadow-md);
-  --ease-standard: var(--app-motion-ease);
+:root {
+  --dela-sys-color-background-canvas: #f8fafc;
+  --dela-sys-color-background-surface: #ffffff;
+  --dela-sys-color-background-subtle: #f1f5f9;
+  --dela-sys-color-background-elevated: #ffffff;
+  --dela-sys-color-foreground-default: #0f172a;
+  --dela-sys-color-foreground-muted: #475569;
+  --dela-sys-color-foreground-subtle: #1e293b;
+  --dela-sys-color-foreground-inverse: #ffffff;
+  --dela-sys-color-foreground-disabled: #94a3b8;
+  --dela-sys-color-border-default: #cbd5e1;
+  --dela-sys-color-border-subtle: #e2e8f0;
+  --dela-sys-color-border-strong: #94a3b8;
+  --dela-sys-color-border-focus: #2563eb;
+  --dela-sys-color-action-primary-background: #2563eb;
+  --dela-sys-color-action-primary-foreground: #ffffff;
+  --dela-sys-color-action-primary-hover: #1d4ed8;
+  --dela-sys-color-action-primary-pressed: #1d4ed8;
+  --dela-sys-color-action-primary-disabled: #94a3b8;
+  --dela-sys-color-action-secondary-background: #ffffff;
+  --dela-sys-color-action-secondary-foreground: #1e293b;
+  --dela-sys-color-action-secondary-hover: #f1f5f9;
+  --dela-sys-color-action-secondary-pressed: #e2e8f0;
+  --dela-sys-color-action-secondary-disabled: #94a3b8;
+  --dela-sys-color-feedback-info-foreground: #1d4ed8;
+  --dela-sys-color-feedback-info-background: #eff6ff;
+  --dela-sys-color-feedback-info-border: #1d4ed8;
+  --dela-sys-color-feedback-success-foreground: #15803d;
+  --dela-sys-color-feedback-success-background: #f0fdf4;
+  --dela-sys-color-feedback-success-border: #15803d;
+  --dela-sys-color-feedback-warning-foreground: #a16207;
+  --dela-sys-color-feedback-warning-background: #fffbeb;
+  --dela-sys-color-feedback-warning-border: #a16207;
+  --dela-sys-color-feedback-danger-foreground: #b91c1c;
+  --dela-sys-color-feedback-danger-background: #fef2f2;
+  --dela-sys-color-feedback-danger-border: #b91c1c;
+  --dela-sys-color-selection-background: #eff6ff;
+  --dela-sys-color-selection-foreground: #1d4ed8;
+  --dela-sys-color-focus-ring: #2563eb;
+  --dela-sys-color-focus-offset: #ffffff;
+  --dela-sys-typography-body-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
+  --dela-sys-typography-body-size: 0.875rem;
+  --dela-sys-typography-body-weight: 400;
+  --dela-sys-typography-body-line-height: 1.5;
+  --dela-sys-typography-code-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --dela-sys-typography-code-size: 0.875rem;
+  --dela-sys-typography-code-weight: 400;
+  --dela-sys-typography-code-line-height: 1.5;
+  --dela-sys-typography-heading-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    'Segoe UI', sans-serif;
+  --dela-sys-typography-heading-size: 1.25rem;
+  --dela-sys-typography-heading-weight: 600;
+  --dela-sys-typography-heading-line-height: 1.25;
+  --dela-sys-spacing-none: 0;
+  --dela-sys-spacing-compact: 0.25rem;
+  --dela-sys-spacing-tight: 0.5rem;
+  --dela-sys-spacing-default: 1rem;
+  --dela-sys-spacing-spacious: 1.5rem;
+  --dela-sys-radius-none: 0;
+  --dela-sys-radius-small: 0.25rem;
+  --dela-sys-radius-medium: 0.375rem;
+  --dela-sys-radius-large: 0.5rem;
+  --dela-sys-elevation-surface: 0 1px 2px rgb(15 23 42 / 0.06);
+  --dela-sys-elevation-overlay: 0 4px 12px rgb(15 23 42 / 0.08);
+  --dela-sys-focus-width: 2px;
+  --dela-sys-focus-offset-width: 2px;
+  --dela-sys-motion-duration-fast: 100ms;
+  --dela-sys-motion-duration-normal: 180ms;
+  --dela-sys-motion-easing-standard: cubic-bezier(0.2, 0, 0, 1);
 
-  /* ponytail: media queries cannot resolve runtime var(); keep these synced by tests. */
+  /* ponytail: Phase 3 removes alert-domain color from core tokens; remove this block and legacyAlertTokenAdapter/legacy-alert-compat then. */
+  --dela-legacy-alert-severity-critical: #b91c1c;
+  --dela-legacy-alert-severity-high: #c2410c;
+  --dela-legacy-alert-severity-medium: #a16207;
+  --dela-legacy-alert-severity-low: #0e7490;
+  --dela-legacy-alert-severity-surface-critical: #fef2f2;
+  --dela-legacy-alert-severity-surface-high: #fff7ed;
+  --dela-legacy-alert-severity-surface-medium: #fffbeb;
+  --dela-legacy-alert-severity-surface-low: #ecfeff;
+  --dela-legacy-alert-status-new: #2563eb;
+  --dela-legacy-alert-status-investigating: #a16207;
+  --dela-legacy-alert-status-resolved: #15803d;
+  --dela-legacy-alert-status-dismissed: #475569;
+  --dela-legacy-alert-status-surface-new: #eff6ff;
+  --dela-legacy-alert-status-surface-investigating: #fffbeb;
+  --dela-legacy-alert-status-surface-resolved: #f0fdf4;
+  --dela-legacy-alert-status-surface-dismissed: #f1f5f9;
+}
+
+@theme inline {
+  --color-background-canvas: var(--dela-sys-color-background-canvas);
+  --color-background-surface: var(--dela-sys-color-background-surface);
+  --color-background-subtle: var(--dela-sys-color-background-subtle);
+  --color-background-elevated: var(--dela-sys-color-background-elevated);
+  --color-foreground-default: var(--dela-sys-color-foreground-default);
+  --color-foreground-muted: var(--dela-sys-color-foreground-muted);
+  --color-foreground-subtle: var(--dela-sys-color-foreground-subtle);
+  --color-foreground-inverse: var(--dela-sys-color-foreground-inverse);
+  --color-border-default: var(--dela-sys-color-border-default);
+  --color-border-subtle: var(--dela-sys-color-border-subtle);
+  --color-action-primary: var(--dela-sys-color-action-primary-background);
+  --color-action-hover: var(--dela-sys-color-action-primary-hover);
+  --color-action-subtle: var(--dela-sys-color-selection-background);
+  --color-focus-ring: var(--dela-sys-color-focus-ring);
+  --color-focus-offset: var(--dela-sys-color-focus-offset);
+  --font-sans: var(--dela-sys-typography-body-family);
+  --font-mono: var(--dela-sys-typography-code-family);
+  --text-sm: var(--dela-sys-typography-body-size);
+  --text-xl: var(--dela-sys-typography-heading-size);
+  --font-weight-semibold: var(--dela-sys-typography-heading-weight);
+  --leading-normal: var(--dela-sys-typography-body-line-height);
+  --spacing-xs: var(--dela-sys-spacing-compact);
+  --spacing-sm: var(--dela-sys-spacing-tight);
+  --spacing-md: var(--dela-sys-spacing-default);
+  --spacing-lg: var(--dela-sys-spacing-spacious);
+  --radius-sm: var(--dela-sys-radius-small);
+  --radius-md: var(--dela-sys-radius-medium);
+  --radius-lg: var(--dela-sys-radius-large);
+  --shadow-sm: var(--dela-sys-elevation-surface);
+  --shadow-md: var(--dela-sys-elevation-overlay);
+  --ease-standard: var(--dela-sys-motion-easing-standard);
+
+  /* ponytail: media queries cannot resolve runtime var(); keep synced by tests. */
   --breakpoint-sm: 40rem;
   --breakpoint-md: 48rem;
   --breakpoint-lg: 64rem;
   --breakpoint-xl: 80rem;
 }
 
-@utility duration-fast {
-  transition-duration: var(--app-motion-duration-fast);
+/* ponytail: alert severity/status utilities below — Phase 3 removal target, see --dela-legacy-alert-* block above. */
+@utility text-severity-critical {
+  color: var(--dela-legacy-alert-severity-critical);
 }
-
-@utility duration-normal {
-  transition-duration: var(--app-motion-duration-normal);
+@utility text-severity-high {
+  color: var(--dela-legacy-alert-severity-high);
 }
-
-@utility outline-offset-app {
-  outline-offset: var(--app-focus-offset);
+@utility text-severity-medium {
+  color: var(--dela-legacy-alert-severity-medium);
 }
-
-@utility min-w-breakpoint-sm {
-  min-width: var(--app-breakpoint-sm);
+@utility text-severity-low {
+  color: var(--dela-legacy-alert-severity-low);
 }
-
-@utility min-w-breakpoint-md {
-  min-width: var(--app-breakpoint-md);
+@utility bg-severity-surface-critical {
+  background-color: var(--dela-legacy-alert-severity-surface-critical);
 }
-
-@utility min-w-breakpoint-lg {
-  min-width: var(--app-breakpoint-lg);
+@utility bg-severity-surface-high {
+  background-color: var(--dela-legacy-alert-severity-surface-high);
 }
-
-@utility min-w-breakpoint-xl {
-  min-width: var(--app-breakpoint-xl);
+@utility bg-severity-surface-medium {
+  background-color: var(--dela-legacy-alert-severity-surface-medium);
+}
+@utility bg-severity-surface-low {
+  background-color: var(--dela-legacy-alert-severity-surface-low);
+}
+@utility border-t-severity-critical {
+  border-top-color: var(--dela-legacy-alert-severity-critical);
+}
+@utility border-t-severity-high {
+  border-top-color: var(--dela-legacy-alert-severity-high);
+}
+@utility border-t-severity-medium {
+  border-top-color: var(--dela-legacy-alert-severity-medium);
+}
+@utility border-t-severity-low {
+  border-top-color: var(--dela-legacy-alert-severity-low);
+}
+@utility text-status-new {
+  color: var(--dela-legacy-alert-status-new);
+}
+@utility text-status-investigating {
+  color: var(--dela-legacy-alert-status-investigating);
+}
+@utility text-status-resolved {
+  color: var(--dela-legacy-alert-status-resolved);
+}
+@utility text-status-dismissed {
+  color: var(--dela-legacy-alert-status-dismissed);
+}
+@utility bg-status-surface-new {
+  background-color: var(--dela-legacy-alert-status-surface-new);
+}
+@utility bg-status-surface-investigating {
+  background-color: var(--dela-legacy-alert-status-surface-investigating);
+}
+@utility bg-status-surface-resolved {
+  background-color: var(--dela-legacy-alert-status-surface-resolved);
+}
+@utility bg-status-surface-dismissed {
+  background-color: var(--dela-legacy-alert-status-surface-dismissed);
 }
