@@ -2,7 +2,11 @@ import { Button, Descriptions, Drawer, Select, Tag } from 'antd'
 import { useRef } from 'react'
 import type { AlertStatus, SecurityAlert } from '../../../core/types/alerts'
 import { formatDetectedAt } from '../alert-derivations'
-import { severityPresentation, statusOptions } from '../alert-presentation'
+import {
+  severityPresentation,
+  statusOptions,
+  statusPresentation,
+} from '../alert-presentation'
 
 interface AlertDetailDrawerProps {
   alert: SecurityAlert | undefined
@@ -27,7 +31,23 @@ export function AlertDetailDrawer({
 
   return (
     <Drawer
-      title="Alert details"
+      title={
+        alert ? (
+          <div className="flex items-center gap-sm">
+            <Tag
+              bordered={false}
+              className={severityPresentation[alert.severity].className}
+            >
+              {severityPresentation[alert.severity].label}
+            </Tag>
+            <h2 className="text-foreground-default m-0 text-base font-semibold">
+              {alert.title}
+            </h2>
+          </div>
+        ) : (
+          'Alert details'
+        )
+      }
       open={open}
       onClose={onClose}
       afterOpenChange={(nextOpen) => {
@@ -39,6 +59,7 @@ export function AlertDetailDrawer({
       extra={
         <Button
           ref={firstActionRef}
+          type="primary"
           onClick={onAssignToMe}
           loading={pending}
           disabled={pending || !alert || alert.assignedTo === 'Alex Morgan'}
@@ -57,10 +78,17 @@ export function AlertDetailDrawer({
               Overview
             </h3>
             <Descriptions bordered column={1} size="small">
-              <Descriptions.Item label="ID">{alert.id}</Descriptions.Item>
+              <Descriptions.Item label="ID">
+                <span className="font-mono">{alert.id}</span>
+              </Descriptions.Item>
               <Descriptions.Item label="Title">{alert.title}</Descriptions.Item>
               <Descriptions.Item label="Severity">
-                <Tag>{severityPresentation[alert.severity].label}</Tag>
+                <Tag
+                  bordered={false}
+                  className={severityPresentation[alert.severity].className}
+                >
+                  {severityPresentation[alert.severity].label}
+                </Tag>
               </Descriptions.Item>
               <Descriptions.Item label="Category">
                 {alert.category}
@@ -77,10 +105,10 @@ export function AlertDetailDrawer({
             </h3>
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="Affected asset">
-                {alert.affectedAsset}
+                <span className="font-mono">{alert.affectedAsset}</span>
               </Descriptions.Item>
               <Descriptions.Item label="Domain controller">
-                {alert.domainController}
+                <span className="font-mono">{alert.domainController}</span>
               </Descriptions.Item>
               <Descriptions.Item label="Detected">
                 {formatDetectedAt(alert.detectedAt)}
@@ -97,14 +125,23 @@ export function AlertDetailDrawer({
             </h3>
             <Descriptions bordered column={1} size="small">
               <Descriptions.Item label="Status">
-                <Select
-                  aria-label="Alert status"
-                  value={alert.status}
-                  options={statusOptions}
-                  virtual={false}
-                  onChange={onStatusChange}
-                  disabled={pending}
-                />
+                <div className="flex items-center gap-sm">
+                  <Tag
+                    data-testid="drawer-status-tag"
+                    bordered={false}
+                    className={statusPresentation[alert.status].className}
+                  >
+                    {statusPresentation[alert.status].label}
+                  </Tag>
+                  <Select
+                    aria-label="Alert status"
+                    value={alert.status}
+                    options={statusOptions}
+                    virtual={false}
+                    onChange={onStatusChange}
+                    disabled={pending}
+                  />
+                </div>
               </Descriptions.Item>
               <Descriptions.Item label="Assigned to">
                 {alert.assignedTo ?? 'Unassigned'}

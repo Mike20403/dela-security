@@ -1,5 +1,11 @@
 import { App } from 'antd'
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import type { ComponentProps } from 'react'
 import { describe, expect, it, vi } from 'vitest'
@@ -42,12 +48,11 @@ function renderDrawer(
 describe('AlertDetailDrawer', () => {
   it('renders every field and safe missing assignment', () => {
     renderDrawer()
+    const overview = screen.getByRole('region', { name: 'Overview' })
+    for (const value of [alert.id, alert.title, 'Critical', alert.category]) {
+      expect(within(overview).getByText(value)).toBeVisible()
+    }
     for (const value of [
-      alert.id,
-      alert.title,
-      'Critical',
-      'Open',
-      alert.category,
       alert.affectedAsset,
       alert.domainController,
       alert.description,
@@ -56,6 +61,7 @@ describe('AlertDetailDrawer', () => {
     ]) {
       expect(screen.getByText(value)).toBeVisible()
     }
+    expect(screen.getByTestId('drawer-status-tag')).toHaveTextContent('Open')
   })
 
   it('closes on Escape', async () => {
@@ -118,5 +124,29 @@ describe('AlertDetailDrawer', () => {
     ]) {
       expect(screen.getByRole('heading', { name: heading })).toBeVisible()
     }
+  })
+
+  it('colors the severity tag according to the severity presentation', () => {
+    renderDrawer()
+
+    const overview = screen.getByRole('region', { name: 'Overview' })
+    const severityTag = within(overview).getByText('Critical')
+    expect(severityTag.className).toMatch(/text-severity-critical/)
+  })
+
+  it('colors a status tag according to the current status presentation', () => {
+    renderDrawer()
+
+    const statusTag = screen.getByTestId('drawer-status-tag')
+    expect(statusTag).toHaveTextContent('Open')
+    expect(statusTag.className).toMatch(/text-status-open/)
+  })
+
+  it('shows the alert title and severity as drawer header context', () => {
+    renderDrawer()
+
+    expect(
+      screen.getByRole('heading', { name: /Golden Ticket detected/ }),
+    ).toBeVisible()
   })
 })
