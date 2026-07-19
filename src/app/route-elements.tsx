@@ -6,10 +6,6 @@ import {
 } from 'react-router-dom'
 import { AppError, normalizeError } from '../core/errors/AppError'
 
-export function AlertsPlaceholder() {
-  return <h1>Security alerts</h1>
-}
-
 export function RootRedirect() {
   return <Navigate to="/alerts" replace />
 }

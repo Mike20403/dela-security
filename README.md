@@ -44,9 +44,17 @@ Malformed initial list payload is hard failure: no untrusted records render and 
 
 Mutations update status and assignment optimistically. Cache snapshots provide race-safe rollback on failure; repository details never reach UI feedback.
 
-## Design and accessibility
+## Design system
 
-`src/core/theme/tokens.ts` is design-token SSOT. `tokens.css` exposes same semantics to Tailwind; `antd-theme.ts` maps them to Ant Design. No duplicate feature color palette.
+Two internal token layers plus one domain presentation map, never mixed:
+
+- **Reference tokens** (`src/core/theme/internal/reference-tokens.ts`): raw palette, spacing, type, radius, shadow, motion, breakpoint, focus primitives. Internal only — components never import these directly.
+- **System tokens** (`src/core/theme/tokens.ts`, exports `systemTokens` and `publicSystemCssVariables`): the intentional public contract. Every system value resolves to a reference value (enforced by `theme.test.ts`). `tokens.css` publishes system tokens as `--dela-sys-*` CSS variables and re-exposes a subset under Tailwind's own `--color-*`/`--spacing-*`/... namespace so Tailwind utilities and Ant Design (`antd-theme.ts`, via `cssVar`) read the same values. No `--app-*`, no duplicate palette.
+- **Alert presentation** (`src/pages/alerts/alert-presentation.ts`): a typed, exhaustive map from `AlertSeverity`/`AlertStatus` to label, order, and static utility class names sourced from system feedback roles. This is the one place severity/status colors and labels live — table, filter panel, drawer, and summary stats all read from it instead of keeping their own copies.
+
+Decision rule for adding to any layer: a component token is added only after the same component-specific value has been needed more than once; a domain value is promoted out of `alert-presentation.ts` into a public system/`--dela-alert-*` token only if another feature domain proves it needs to reuse and re-theme it independently. Architecture is theme-ready but only light theme ships — no dark-mode toggle exists.
+
+## Accessibility
 
 Rows support Enter/Space, drawer opening moves focus inside, Escape/close restores exact connected opener, and removed openers fall back to page heading. Labels, focus indicators, reduced motion, responsive filter controls, horizontal table containment, and drawer width `min(40rem, 100vw)` cover keyboard and narrow-screen use. Table width belongs to its scroll container; page has no fixed-width assumption.
 
@@ -56,7 +64,7 @@ Rows support Enter/Space, drawer opening moves focus inside, Escape/close restor
 - Status and assignment are only supported mutations; authentication, persistence, and real backend are out of scope.
 - Native `fetch` replaces Axios. Deterministic fixtures replace Faker. React Query plus local state replaces global state.
 - No generic API/component wrappers: current repetition does not justify them.
-- Full Ant Design inclusion produces accepted bundle-size warning: final JS is 1,290.13 kB minified / 404.20 kB gzip. Dashboard needs Table, Drawer, forms, date controls, and accessibility behavior; manual chunking or single-route lazy loading would add complexity without improving this exercise's first route.
+- Full Ant Design inclusion produces accepted bundle-size warning: final JS is 1,283.30 kB minified / 400.61 kB gzip. Dashboard needs Table, Drawer, forms, date controls, and accessibility behavior; manual chunking or single-route lazy loading would add complexity without improving this exercise's first route.
 
 ## AI-assisted workflow
 
