@@ -1,7 +1,8 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './App'
-import { applyCssVariables } from './core/theme/tokens'
+// Temporary until Phase 2 replaces runtime injection with static system variables.
+import { applyCssVariables } from './core/theme/internal/legacy-theme-compat'
 import './styles/global.css'
 
 applyCssVariables()

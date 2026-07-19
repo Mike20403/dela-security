@@ -1,57 +1,12 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { antdTheme } from './antd-theme.ts'
-import { applyCssVariables, cssVariables, tokens } from './tokens.ts'
+import { referenceTokens } from './internal/reference-tokens.ts'
+import * as themeExports from './tokens.ts'
+import { publicSystemCssVariables, systemTokens } from './tokens.ts'
 
 const readStyle = (name: string) =>
   readFileSync(`${process.cwd()}/src/styles/${name}`, 'utf8')
-
-const entries = (
-  prefix: string,
-  values: Readonly<Record<string, string | number>>,
-) =>
-  Object.entries(values).map(
-    ([name, value]) => [`${prefix}${name}`, value] as const,
-  )
-
-const tokenMappingGroups = [
-  entries('--app-color-surface-', tokens.semantic.surface),
-  entries('--app-color-text-', tokens.semantic.text),
-  entries('--app-color-border-', tokens.semantic.border),
-  entries('--app-color-focus-', tokens.semantic.focus),
-  entries('--app-color-action-', tokens.semantic.action),
-  entries('--app-color-severity-', tokens.semantic.severity),
-  entries('--app-color-severity-surface-', tokens.semantic.severitySurface),
-  entries('--app-color-status-', tokens.semantic.status),
-  entries('--app-color-status-surface-', tokens.semantic.statusSurface),
-  entries('--app-font-', {
-    sans: tokens.primitive.typography.sans,
-    mono: tokens.primitive.typography.mono,
-  }),
-  entries('--app-font-size-', {
-    xs: tokens.primitive.typography.xs,
-    sm: tokens.primitive.typography.sm,
-    base: tokens.primitive.typography.base,
-    lg: tokens.primitive.typography.lg,
-    xl: tokens.primitive.typography.xl,
-  }),
-  entries('--app-font-weight-', {
-    normal: tokens.primitive.typography.weightNormal,
-    medium: tokens.primitive.typography.weightMedium,
-    semibold: tokens.primitive.typography.weightSemibold,
-  }),
-  [['--app-line-height-normal', tokens.primitive.typography.leading]],
-  entries('--app-spacing-', tokens.primitive.spacing),
-  entries('--app-radius-', tokens.primitive.radius),
-  entries('--app-shadow-', tokens.primitive.elevation),
-  entries('--app-motion-duration-', {
-    fast: tokens.primitive.motion.fast,
-    normal: tokens.primitive.motion.normal,
-  }),
-  [['--app-motion-ease', tokens.primitive.motion.ease]],
-  entries('--app-breakpoint-', tokens.primitive.breakpoint),
-  [['--app-focus-offset', tokens.primitive.focus.offset]],
-] as const
 
 const leafValues = (value: unknown): Array<string | number> => {
   if (typeof value === 'string' || typeof value === 'number') return [value]
@@ -79,130 +34,250 @@ const contrast = (foreground: string, background: string) => {
   return (lighter! + 0.05) / (darker! + 0.05)
 }
 
-describe('design tokens', () => {
-  it('defines required primitive and semantic layers', () => {
-    expect(Object.keys(tokens.primitive)).toEqual(
-      expect.arrayContaining([
-        'palette',
-        'typography',
-        'spacing',
-        'radius',
-        'elevation',
-        'motion',
-        'breakpoint',
-      ]),
+describe('product token contracts', () => {
+  it('exports only canonical public contracts', () => {
+    expect(Object.keys(themeExports).sort()).toEqual([
+      'publicSystemCssVariables',
+      'systemTokens',
+    ])
+
+    const source = readFileSync(
+      `${process.cwd()}/src/core/theme/tokens.ts`,
+      'utf8',
     )
-    expect(Object.keys(tokens.semantic)).toEqual(
-      expect.arrayContaining([
-        'surface',
-        'text',
+    expect(source).not.toMatch(
+      /legacyAlertTokenAdapter|legacyCssVariables|cssVariables|applyCssVariables|primitive|severity|status/,
+    )
+  })
+
+  it('defines exact reference and system layers', () => {
+    expect(Object.keys(referenceTokens)).toEqual([
+      'color',
+      'spacing',
+      'typography',
+      'radius',
+      'shadow',
+      'motion',
+      'breakpoint',
+      'focus',
+    ])
+    expect(Object.keys(systemTokens)).toEqual([
+      'color',
+      'typography',
+      'spacing',
+      'radius',
+      'elevation',
+      'focus',
+      'motion',
+      'breakpoint',
+    ])
+    expect(Object.keys(systemTokens.color)).toEqual([
+      'background',
+      'foreground',
+      'border',
+      'action',
+      'feedback',
+      'selection',
+    ])
+  })
+
+  it('resolves every system alias to a reference value', () => {
+    const references = new Set(leafValues(referenceTokens))
+
+    for (const value of leafValues(systemTokens)) {
+      expect(references, `unknown reference alias: ${String(value)}`).toContain(
+        value,
+      )
+    }
+  })
+
+  it('keeps alert domain names out of canonical core layers', () => {
+    const keys = (value: unknown): string[] =>
+      value && typeof value === 'object'
+        ? Object.entries(value).flatMap(([key, child]) => [key, ...keys(child)])
+        : []
+
+    expect(keys({ systemTokens, publicSystemCssVariables })).not.toEqual(
+      expect.arrayContaining(['severity', 'status']),
+    )
+    expect(themeExports).not.toHaveProperty('tokens')
+    expect(systemTokens).not.toHaveProperty('primitive')
+    expect(Object.keys(systemTokens.color.feedback)).toEqual([
+      'info',
+      'success',
+      'warning',
+      'danger',
+    ])
+    for (const feedback of Object.values(systemTokens.color.feedback)) {
+      expect(Object.keys(feedback)).toEqual([
+        'foreground',
+        'background',
         'border',
-        'focus',
-        'action',
-        'severity',
-        'status',
-      ]),
-    )
-    expect(Object.keys(tokens.semantic.severity)).toEqual([
-      'critical',
-      'high',
-      'medium',
-      'low',
+      ])
+    }
+  })
+
+  it('uses insertion-ready numeric spacing and radius scales', () => {
+    expect(Object.keys(referenceTokens.spacing)).toEqual([
+      '0',
+      '1',
+      '2',
+      '3',
+      '4',
+      '6',
+      '8',
     ])
-    expect(Object.keys(tokens.semantic.status)).toEqual([
-      'new',
-      'investigating',
-      'resolved',
-      'dismissed',
-    ])
+    expect(Object.keys(referenceTokens.radius)).toEqual(['0', '1', '2', '3'])
+    expect(systemTokens.spacing).toMatchObject({
+      compact: referenceTokens.spacing[1],
+      default: referenceTokens.spacing[4],
+      spacious: referenceTokens.spacing[6],
+    })
   })
 
-  it('maps every required canonical value', () => {
-    expect(Object.entries(cssVariables)).toEqual(
-      expect.arrayContaining(tokenMappingGroups.flat()),
-    )
-  })
+  it('maps every public CSS name to its intended system role', () => {
+    const expected = {
+      '--dela-sys-color-background-canvas':
+        systemTokens.color.background.canvas,
+      '--dela-sys-color-background-surface':
+        systemTokens.color.background.surface,
+      '--dela-sys-color-background-subtle':
+        systemTokens.color.background.subtle,
+      '--dela-sys-color-background-elevated':
+        systemTokens.color.background.elevated,
+      '--dela-sys-color-foreground-default':
+        systemTokens.color.foreground.default,
+      '--dela-sys-color-foreground-muted': systemTokens.color.foreground.muted,
+      '--dela-sys-color-foreground-subtle':
+        systemTokens.color.foreground.subtle,
+      '--dela-sys-color-foreground-inverse':
+        systemTokens.color.foreground.inverse,
+      '--dela-sys-color-foreground-disabled':
+        systemTokens.color.foreground.disabled,
+      '--dela-sys-color-border-default': systemTokens.color.border.default,
+      '--dela-sys-color-border-subtle': systemTokens.color.border.subtle,
+      '--dela-sys-color-border-strong': systemTokens.color.border.strong,
+      '--dela-sys-color-border-focus': systemTokens.color.border.focus,
+      '--dela-sys-color-action-primary-background':
+        systemTokens.color.action.primary.background,
+      '--dela-sys-color-action-primary-foreground':
+        systemTokens.color.action.primary.foreground,
+      '--dela-sys-color-action-primary-hover':
+        systemTokens.color.action.primary.hover,
+      '--dela-sys-color-action-primary-pressed':
+        systemTokens.color.action.primary.pressed,
+      '--dela-sys-color-action-primary-disabled':
+        systemTokens.color.action.primary.disabled,
+      '--dela-sys-color-action-secondary-background':
+        systemTokens.color.action.secondary.background,
+      '--dela-sys-color-action-secondary-foreground':
+        systemTokens.color.action.secondary.foreground,
+      '--dela-sys-color-action-secondary-hover':
+        systemTokens.color.action.secondary.hover,
+      '--dela-sys-color-action-secondary-pressed':
+        systemTokens.color.action.secondary.pressed,
+      '--dela-sys-color-action-secondary-disabled':
+        systemTokens.color.action.secondary.disabled,
+      '--dela-sys-color-feedback-info-foreground':
+        systemTokens.color.feedback.info.foreground,
+      '--dela-sys-color-feedback-info-background':
+        systemTokens.color.feedback.info.background,
+      '--dela-sys-color-feedback-info-border':
+        systemTokens.color.feedback.info.border,
+      '--dela-sys-color-feedback-success-foreground':
+        systemTokens.color.feedback.success.foreground,
+      '--dela-sys-color-feedback-success-background':
+        systemTokens.color.feedback.success.background,
+      '--dela-sys-color-feedback-success-border':
+        systemTokens.color.feedback.success.border,
+      '--dela-sys-color-feedback-warning-foreground':
+        systemTokens.color.feedback.warning.foreground,
+      '--dela-sys-color-feedback-warning-background':
+        systemTokens.color.feedback.warning.background,
+      '--dela-sys-color-feedback-warning-border':
+        systemTokens.color.feedback.warning.border,
+      '--dela-sys-color-feedback-danger-foreground':
+        systemTokens.color.feedback.danger.foreground,
+      '--dela-sys-color-feedback-danger-background':
+        systemTokens.color.feedback.danger.background,
+      '--dela-sys-color-feedback-danger-border':
+        systemTokens.color.feedback.danger.border,
+      '--dela-sys-color-selection-background':
+        systemTokens.color.selection.background,
+      '--dela-sys-color-selection-foreground':
+        systemTokens.color.selection.foreground,
+      '--dela-sys-color-focus-ring': systemTokens.focus.ring,
+      '--dela-sys-color-focus-offset': systemTokens.focus.offsetColor,
+      '--dela-sys-typography-body-family': systemTokens.typography.body.family,
+      '--dela-sys-typography-body-size': systemTokens.typography.body.size,
+      '--dela-sys-typography-body-weight': systemTokens.typography.body.weight,
+      '--dela-sys-typography-body-line-height':
+        systemTokens.typography.body.lineHeight,
+      '--dela-sys-typography-code-family': systemTokens.typography.code.family,
+      '--dela-sys-typography-code-size': systemTokens.typography.code.size,
+      '--dela-sys-typography-code-weight': systemTokens.typography.code.weight,
+      '--dela-sys-typography-code-line-height':
+        systemTokens.typography.code.lineHeight,
+      '--dela-sys-typography-heading-family':
+        systemTokens.typography.heading.family,
+      '--dela-sys-typography-heading-size':
+        systemTokens.typography.heading.size,
+      '--dela-sys-typography-heading-weight':
+        systemTokens.typography.heading.weight,
+      '--dela-sys-typography-heading-line-height':
+        systemTokens.typography.heading.lineHeight,
+      '--dela-sys-spacing-none': systemTokens.spacing.none,
+      '--dela-sys-spacing-compact': systemTokens.spacing.compact,
+      '--dela-sys-spacing-tight': systemTokens.spacing.tight,
+      '--dela-sys-spacing-default': systemTokens.spacing.default,
+      '--dela-sys-spacing-spacious': systemTokens.spacing.spacious,
+      '--dela-sys-radius-none': systemTokens.radius.none,
+      '--dela-sys-radius-small': systemTokens.radius.small,
+      '--dela-sys-radius-medium': systemTokens.radius.medium,
+      '--dela-sys-radius-large': systemTokens.radius.large,
+      '--dela-sys-elevation-surface': systemTokens.elevation.surface,
+      '--dela-sys-elevation-overlay': systemTokens.elevation.overlay,
+      '--dela-sys-focus-width': systemTokens.focus.width,
+      '--dela-sys-focus-offset-width': systemTokens.focus.offset,
+      '--dela-sys-motion-duration-fast': systemTokens.motion.fast,
+      '--dela-sys-motion-duration-normal': systemTokens.motion.normal,
+      '--dela-sys-motion-easing-standard': systemTokens.motion.standard,
+    } as const
 
-  it('maps every canonical token leaf to a runtime variable', () => {
-    const mappedValues = new Set(Object.values(cssVariables))
-
-    for (const value of leafValues(tokens)) {
-      expect(
-        mappedValues,
-        `unmapped canonical token: ${String(value)}`,
-      ).toContain(value)
-    }
-  })
-
-  it('applies every variable to an explicit root', () => {
-    const root = document.createElement('section')
-
-    applyCssVariables(root)
-
-    for (const [name, value] of Object.entries(cssVariables)) {
-      expect(root.style.getPropertyValue(name)).toBe(String(value))
-    }
-  })
-
-  it('does not require document when applying or omitting an explicit root', () => {
-    const root = document.createElement('section')
-    const originalDocument = globalThis.document
-
-    Reflect.deleteProperty(globalThis, 'document')
-    try {
-      expect(() => applyCssVariables(root)).not.toThrow()
-      expect(() => applyCssVariables()).not.toThrow()
-    } finally {
-      Object.defineProperty(globalThis, 'document', {
-        configurable: true,
-        value: originalDocument,
-        writable: true,
-      })
-    }
-
-    expect(root.style.getPropertyValue('--app-color-surface-canvas')).toBe(
-      tokens.semantic.surface.canvas,
+    expect(publicSystemCssVariables).toEqual(expected)
+    expect(Object.keys(publicSystemCssVariables).join(' ')).not.toMatch(
+      /slate|blue|red|amber|green|severity|status/,
     )
   })
 
   it.each([
     [
       'primary text on canvas',
-      tokens.semantic.text.primary,
-      tokens.semantic.surface.canvas,
+      systemTokens.color.foreground.default,
+      systemTokens.color.background.canvas,
       4.5,
     ],
     [
       'secondary text on canvas',
-      tokens.semantic.text.secondary,
-      tokens.semantic.surface.canvas,
+      systemTokens.color.foreground.muted,
+      systemTokens.color.background.canvas,
       4.5,
     ],
     [
       'inverse text on action',
-      tokens.semantic.text.inverse,
-      tokens.semantic.action.primary,
+      systemTokens.color.foreground.inverse,
+      systemTokens.color.action.primary.background,
       4.5,
     ],
-    ...Object.keys(tokens.semantic.severity).map((name) => [
-      `${name} severity`,
-      tokens.semantic.severity[name as keyof typeof tokens.semantic.severity],
-      tokens.semantic.severitySurface[
-        name as keyof typeof tokens.semantic.severitySurface
-      ],
+    ...Object.entries(systemTokens.color.feedback).map(([name, feedback]) => [
+      `${name} feedback`,
+      feedback.foreground,
+      feedback.background,
       4.5,
     ]),
-    ...Object.keys(tokens.semantic.status).map((name) => [
-      `${name} status`,
-      tokens.semantic.status[name as keyof typeof tokens.semantic.status],
-      tokens.semantic.statusSurface[
-        name as keyof typeof tokens.semantic.statusSurface
-      ],
-      4.5,
-    ]),
-    ...Object.entries(tokens.semantic.surface).map(([name, surface]) => [
+    ...Object.entries(systemTokens.color.background).map(([name, surface]) => [
       `focus ring on ${name} surface`,
-      tokens.semantic.focus.ring,
+      systemTokens.focus.ring,
       surface,
       3,
     ]),
@@ -217,31 +292,20 @@ describe('Ant Design theme', () => {
   it('references canonical tokens and enables stable CSS variables', () => {
     expect(antdTheme.cssVar).toEqual({ key: 'dela-security', prefix: 'dela' })
     expect(antdTheme.token).toMatchObject({
-      colorPrimary: tokens.semantic.action.primary,
-      colorBgLayout: tokens.semantic.surface.canvas,
-      colorBgContainer: tokens.semantic.surface.container,
-      colorText: tokens.semantic.text.primary,
-      colorTextSecondary: tokens.semantic.text.secondary,
-      colorBorder: tokens.semantic.border.default,
-      colorError: tokens.semantic.severity.critical,
-      colorWarning: tokens.semantic.severity.medium,
-      colorSuccess: tokens.semantic.status.resolved,
+      colorPrimary: systemTokens.color.action.primary.background,
+      colorBgLayout: systemTokens.color.background.canvas,
+      colorBgContainer: systemTokens.color.background.surface,
+      colorText: systemTokens.color.foreground.default,
+      colorTextSecondary: systemTokens.color.foreground.muted,
+      colorBorder: systemTokens.color.border.default,
+      colorError: systemTokens.color.feedback.danger.foreground,
+      colorWarning: systemTokens.color.feedback.warning.foreground,
+      colorSuccess: systemTokens.color.feedback.success.foreground,
     })
   })
 })
 
 describe('CSS integration', () => {
-  it('references every runtime token variable', () => {
-    const tokenCss = readStyle('tokens.css')
-
-    for (const name of Object.keys(cssVariables)) {
-      expect(tokenCss, `${name} missing from tokens.css`).toMatch(
-        new RegExp(`var\\(\\s*${name}\\s*\\)`),
-      )
-    }
-    expect(tokenCss).not.toMatch(/#[\da-f]{3,8}\b/i)
-  })
-
   it.each([
     ['--spacing-xs', '--app-spacing-xs'],
     ['--text-sm', '--app-font-size-sm'],
@@ -259,7 +323,7 @@ describe('CSS integration', () => {
     )
   })
 
-  it.each(Object.entries(tokens.primitive.breakpoint))(
+  it.each(Object.entries(systemTokens.breakpoint))(
     'exposes build-time Tailwind breakpoint %s',
     (name, value) => {
       expect(readStyle('tokens.css')).toContain(
