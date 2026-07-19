@@ -154,4 +154,13 @@ describe('AlertsTable', () => {
 
     expect(screen.getByText('Showing 2 alerts')).toBeInTheDocument()
   })
+
+  it('pins the Actions column to the right so it stays visible without scrolling', () => {
+    render(<AlertsTable alerts={[makeAlert(1)]} onSelectAlert={vi.fn()} />)
+
+    const actionsHeader = screen.getByRole('columnheader', {
+      name: 'Actions',
+    })
+    expect(actionsHeader.closest('th')).toHaveClass('ant-table-cell-fix-right')
+  })
 })

@@ -87,6 +87,7 @@ function PaginatedAlertsTable({ alerts, onSelectAlert }: AlertsTableProps) {
       title: 'Actions',
       key: 'actions',
       width: 100,
+      fixed: 'right',
       render: (_, alert) => (
         <Button
           type="link"
