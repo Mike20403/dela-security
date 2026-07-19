@@ -41,6 +41,55 @@ const detectedAtFormatter = new Intl.DateTimeFormat('en-US', {
   timeZone: 'UTC',
 })
 
+export interface SeverityTrendBucket {
+  day: string
+  critical: number
+  high: number
+  medium: number
+  low: number
+}
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000
+
+function toUtcDayKey(date: Date) {
+  return date.toISOString().slice(0, 10)
+}
+
+/** Buckets alerts by UTC day for the trailing 7-day window (inclusive of `reference`'s day). */
+export function buildSeverityTrend(
+  alerts: readonly SecurityAlert[],
+  reference: Date = new Date(),
+): SeverityTrendBucket[] {
+  const referenceDayStart = Date.UTC(
+    reference.getUTCFullYear(),
+    reference.getUTCMonth(),
+    reference.getUTCDate(),
+  )
+  const windowStart = referenceDayStart - 6 * MS_PER_DAY
+
+  const buckets = new Map<string, SeverityTrendBucket>()
+  for (let offset = 0; offset < 7; offset++) {
+    const day = toUtcDayKey(new Date(windowStart + offset * MS_PER_DAY))
+    buckets.set(day, { day, critical: 0, high: 0, medium: 0, low: 0 })
+  }
+
+  for (const alert of alerts) {
+    const detected = new Date(alert.detectedAt)
+    if (Number.isNaN(detected.getTime())) continue
+    const detectedDayStart = Date.UTC(
+      detected.getUTCFullYear(),
+      detected.getUTCMonth(),
+      detected.getUTCDate(),
+    )
+    if (detectedDayStart < windowStart || detectedDayStart > referenceDayStart)
+      continue
+    const bucket = buckets.get(toUtcDayKey(new Date(detectedDayStart)))
+    if (bucket) bucket[alert.severity]++
+  }
+
+  return [...buckets.values()]
+}
+
 export function formatDetectedAt(value: string) {
   const match = /^(\d{4})-(\d{2})-(\d{2})T/.exec(value)
   if (!match) return '—'

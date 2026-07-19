@@ -18,6 +18,7 @@ import {
   TabNavigation,
   type TabNavigationItem,
 } from './components/TabNavigation'
+import { TrendChart } from './components/TrendChart'
 import { useAlerts } from './hooks/useAlerts'
 import { useAlertFilters } from './hooks/useAlertFilters'
 import { useAlertMutation } from './hooks/useAlertMutation'
@@ -173,6 +174,7 @@ export function AlertsPage() {
             onReset={filterState.reset}
           />
           <SummaryStats alerts={visibleAlerts} />
+          <TrendChart alerts={alerts} />
           <section className="border-border-default bg-background-surface overflow-x-auto rounded-md border px-md shadow-sm">
             <TabNavigation
               items={tabs}
