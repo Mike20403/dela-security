@@ -105,4 +105,18 @@ describe('AlertDetailDrawer', () => {
       width: 'min(40rem, 100vw)',
     })
   })
+
+  it('groups content into labeled sections', () => {
+    renderDrawer()
+
+    for (const heading of [
+      'Overview',
+      'Detection context',
+      'Ownership and status',
+      'Analysis',
+      'Recommended action',
+    ]) {
+      expect(screen.getByRole('heading', { name: heading })).toBeVisible()
+    }
+  })
 })

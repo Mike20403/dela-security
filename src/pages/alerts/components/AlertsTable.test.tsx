@@ -106,4 +106,44 @@ describe('AlertsTable', () => {
     expect(onSelectAlert).toHaveBeenCalledTimes(5)
     expect(onSelectAlert).toHaveBeenLastCalledWith(second)
   })
+
+  it('applies a monospace-style class to technical identifier values', () => {
+    render(<AlertsTable alerts={[makeAlert(1)]} onSelectAlert={vi.fn()} />)
+
+    expect(screen.getByText('HOST-1')).toHaveClass('font-mono')
+    expect(screen.getByText('DC01.example.test')).toHaveClass('font-mono')
+  })
+
+  it('gives the Title column stronger emphasis than other data cells', () => {
+    render(<AlertsTable alerts={[makeAlert(1)]} onSelectAlert={vi.fn()} />)
+
+    const title = screen.getByText('Alert 1')
+    expect(title.className).toMatch(/font-weight-semibold|font-semibold/)
+  })
+
+  it('shows explicit UTC timezone context near the Detected header', () => {
+    render(<AlertsTable alerts={[makeAlert(1)]} onSelectAlert={vi.fn()} />)
+
+    const header = screen.getByRole('columnheader', { name: /Detected/ })
+    expect(header).toHaveTextContent('UTC')
+  })
+
+  it('marks the table container as sticky-header-scope via a class contract', () => {
+    const { container } = render(
+      <AlertsTable alerts={[makeAlert(1)]} onSelectAlert={vi.fn()} />,
+    )
+
+    expect(container.firstChild).toHaveClass('sticky-header-scope')
+  })
+
+  it('announces a results-count caption describing visible rows', () => {
+    render(
+      <AlertsTable
+        alerts={[makeAlert(1), makeAlert(2)]}
+        onSelectAlert={vi.fn()}
+      />,
+    )
+
+    expect(screen.getByText('Showing 2 alerts')).toBeInTheDocument()
+  })
 })

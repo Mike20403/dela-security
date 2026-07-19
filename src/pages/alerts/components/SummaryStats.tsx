@@ -16,17 +16,17 @@ const stats: readonly {
   {
     key: 'critical',
     label: severityPresentation.critical.label,
-    borderClass: `border-t-[3px] ${severityPresentation.critical.borderTopClassName}`,
+    borderClass: `border-t-2 ${severityPresentation.critical.borderTopClassName}`,
   },
   {
     key: 'high',
     label: severityPresentation.high.label,
-    borderClass: `border-t-[3px] ${severityPresentation.high.borderTopClassName}`,
+    borderClass: `border-t-2 ${severityPresentation.high.borderTopClassName}`,
   },
   {
     key: 'mediumLow',
     label: 'Medium / Low',
-    borderClass: `border-t-[3px] ${severityPresentation.medium.borderTopClassName}`,
+    borderClass: `border-t-2 ${severityPresentation.medium.borderTopClassName}`,
   },
 ]
 
@@ -42,13 +42,10 @@ export function SummaryStats({ alerts }: SummaryStatsProps) {
         <article
           key={key}
           aria-label={label}
-          className={cn(
-            'border-border-default bg-background-surface rounded-md border p-md shadow-sm',
-            borderClass,
-          )}
+          className={cn('bg-background-surface rounded-md p-sm', borderClass)}
         >
-          <p className="text-foreground-muted m-0 text-sm">{label}</p>
-          <strong className="text-foreground-default mt-xs block text-xl">
+          <p className="text-foreground-muted m-0 text-xs">{label}</p>
+          <strong className="text-foreground-default font-semibold mt-xs block text-xl">
             {summary[key]}
           </strong>
         </article>

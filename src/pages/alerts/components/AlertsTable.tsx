@@ -43,12 +43,32 @@ function PaginatedAlertsTable({ alerts, onSelectAlert }: AlertsTableProps) {
         </Tag>
       ),
     },
-    { title: 'Title', dataIndex: 'title', width: 280, rowScope: 'row' },
-    { title: 'Category', dataIndex: 'category', width: 160 },
-    { title: 'Affected Asset', dataIndex: 'affectedAsset', width: 170 },
-    { title: 'Domain Controller', dataIndex: 'domainController', width: 210 },
     {
-      title: 'Detected',
+      title: 'Title',
+      dataIndex: 'title',
+      width: 280,
+      rowScope: 'row',
+      render: (title: string) => <span className="font-semibold">{title}</span>,
+    },
+    { title: 'Category', dataIndex: 'category', width: 160 },
+    {
+      title: 'Affected Asset',
+      dataIndex: 'affectedAsset',
+      width: 170,
+      render: (value: string) => <span className="font-mono">{value}</span>,
+    },
+    {
+      title: 'Domain Controller',
+      dataIndex: 'domainController',
+      width: 210,
+      render: (value: string) => <span className="font-mono">{value}</span>,
+    },
+    {
+      title: (
+        <span aria-label="Detected">
+          Detected <span aria-hidden="true">(UTC)</span>
+        </span>
+      ),
       dataIndex: 'detectedAt',
       width: 190,
       render: (value: string) => formatDetectedAt(value),
@@ -93,34 +113,39 @@ function PaginatedAlertsTable({ alerts, onSelectAlert }: AlertsTableProps) {
   }
 
   return (
-    <Table<SecurityAlert>
-      aria-label="Security alerts"
-      columns={columns}
-      dataSource={[...alerts]}
-      rowKey="id"
-      pagination={pagination}
-      scroll={{ x: 1340 }}
-      locale={{
-        emptyText: (
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description="No matching alerts"
-          />
-        ),
-      }}
-      onRow={(alert) => ({
-        onClick: () => onSelectAlert(alert),
-        onKeyDown: (event) => {
-          if (event.target !== event.currentTarget) return
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault()
-            onSelectAlert(alert)
-          }
-        },
-        tabIndex: 0,
-        'aria-label': `Select alert ${alert.title}`,
-        className: 'cursor-pointer',
-      })}
-    />
+    <div className="sticky-header-scope">
+      <p className="text-foreground-muted mb-xs text-xs">
+        Showing {alerts.length} alert{alerts.length === 1 ? '' : 's'}
+      </p>
+      <Table<SecurityAlert>
+        aria-label="Security alerts"
+        columns={columns}
+        dataSource={[...alerts]}
+        rowKey="id"
+        pagination={pagination}
+        scroll={{ x: 1340 }}
+        locale={{
+          emptyText: (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description="No matching alerts"
+            />
+          ),
+        }}
+        onRow={(alert) => ({
+          onClick: () => onSelectAlert(alert),
+          onKeyDown: (event) => {
+            if (event.target !== event.currentTarget) return
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault()
+              onSelectAlert(alert)
+            }
+          },
+          tabIndex: 0,
+          'aria-label': `Select alert ${alert.title}`,
+          className: 'cursor-pointer',
+        })}
+      />
+    </div>
   )
 }

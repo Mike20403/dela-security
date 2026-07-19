@@ -183,3 +183,12 @@
 @utility bg-status-surface-suppressed {
   background-color: var(--dela-sys-color-feedback-neutral-background);
 }
+@utility sticky-header-scope {
+  & .ant-table-thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: var(--dela-sys-color-background-subtle);
+    box-shadow: var(--dela-sys-elevation-surface);
+  }
+}

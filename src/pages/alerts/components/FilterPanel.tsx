@@ -34,6 +34,9 @@ export function FilterPanel({
         onApply()
       }}
     >
+      <h2 className="text-foreground-muted col-span-full m-0 text-xs font-semibold tracking-wide uppercase">
+        Alert filters
+      </h2>
       <label className="w-full min-w-0 text-sm sm:col-span-2 lg:col-span-1">
         <span className="text-foreground-muted mb-xs block">Search</span>
         <Controller

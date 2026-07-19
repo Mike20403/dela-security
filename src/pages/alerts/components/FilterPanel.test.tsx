@@ -48,6 +48,12 @@ function TestFilterPanel({
 }
 
 describe('FilterPanel', () => {
+  it('labels the toolbar with a visible section heading', () => {
+    render(<TestFilterPanel />)
+
+    expect(screen.getByRole('heading', { name: 'Alert filters' })).toBeVisible()
+  })
+
   it('reopens a controlled date range without crashing the calendar', async () => {
     const user = userEvent.setup()
     const onApply = vi.fn()
