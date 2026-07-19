@@ -174,7 +174,7 @@ export function AlertsPage() {
             onReset={filterState.reset}
           />
           <SummaryStats alerts={visibleAlerts} />
-          <TrendChart alerts={alerts} />
+          <TrendChart alerts={filteredAlerts} />
           <section className="border-border-default bg-background-surface overflow-x-auto rounded-md border px-md shadow-sm">
             <TabNavigation
               items={tabs}
