@@ -124,6 +124,7 @@ function PaginatedAlertsTable({ alerts, onSelectAlert }: AlertsTableProps) {
         rowKey="id"
         pagination={pagination}
         scroll={{ x: 1340 }}
+        onHeaderRow={() => ({ className: 'dela-table-header-subtle' })}
         locale={{
           emptyText: (
             <Empty

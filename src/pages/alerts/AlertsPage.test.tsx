@@ -13,7 +13,7 @@ const mockedUseAlerts = vi.mocked(useAlerts)
 describe('AlertsPage', () => {
   beforeEach(() => mockedUseAlerts.mockReset())
 
-  it('shows product identity, workspace landmarks, and a skip link', () => {
+  it('shows workspace landmarks', () => {
     mockedUseAlerts.mockReturnValue({
       isPending: false,
       isError: false,
@@ -23,31 +23,9 @@ describe('AlertsPage', () => {
     } as unknown as ReturnType<typeof useAlerts>)
     render(<AlertsPage />)
 
-    expect(screen.getByRole('banner')).toBeVisible()
-    expect(screen.getByRole('main')).toBeVisible()
     expect(
-      screen.getByRole('heading', { name: 'DELA Security', level: 1 }),
+      screen.getByRole('heading', { name: 'Security alerts', level: 2 }),
     ).toBeVisible()
-    expect(screen.getByText('Security Operations')).toBeVisible()
-
-    const skipLink = screen.getByRole('link', { name: 'Skip to main content' })
-    expect(skipLink).toHaveAttribute('href', '#main-content')
-  })
-
-  it('moves focus to main content when the skip link is activated', async () => {
-    mockedUseAlerts.mockReturnValue({
-      isPending: false,
-      isError: false,
-      data: mockAlerts,
-      dataUpdatedAt: Date.parse('2026-07-19T10:00:00Z'),
-      refetch: vi.fn(),
-    } as unknown as ReturnType<typeof useAlerts>)
-    render(<AlertsPage />)
-
-    await userEvent.click(
-      screen.getByRole('link', { name: 'Skip to main content' }),
-    )
-    expect(screen.getByRole('main')).toHaveFocus()
   })
 
   it('shows monitored directory, mock-data status, last-updated time, and refresh action', async () => {

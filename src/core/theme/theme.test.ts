@@ -147,6 +147,8 @@ describe('product token contracts', () => {
         systemTokens.color.background.subtle,
       '--dela-sys-color-background-elevated':
         systemTokens.color.background.elevated,
+      '--dela-sys-color-background-inverse':
+        systemTokens.color.background.inverse,
       '--dela-sys-color-foreground-default':
         systemTokens.color.foreground.default,
       '--dela-sys-color-foreground-muted': systemTokens.color.foreground.muted,
@@ -156,6 +158,8 @@ describe('product token contracts', () => {
         systemTokens.color.foreground.inverse,
       '--dela-sys-color-foreground-disabled':
         systemTokens.color.foreground.disabled,
+      '--dela-sys-color-foreground-on-inverse':
+        systemTokens.color.foreground.onInverse,
       '--dela-sys-color-border-default': systemTokens.color.border.default,
       '--dela-sys-color-border-subtle': systemTokens.color.border.subtle,
       '--dela-sys-color-border-strong': systemTokens.color.border.strong,
@@ -289,16 +293,97 @@ describe('product token contracts', () => {
       feedback.background,
       4.5,
     ]),
-    ...Object.entries(systemTokens.color.background).map(([name, surface]) => [
-      `focus ring on ${name} surface`,
-      systemTokens.focus.ring,
-      surface,
-      3,
-    ]),
+    ...Object.entries(systemTokens.color.background)
+      .filter(([name]) => name !== 'inverse')
+      .map(([name, surface]) => [
+        `focus ring on ${name} surface`,
+        systemTokens.focus.ring,
+        surface,
+        3,
+      ]),
+    [
+      'onInverse text on inverse surface',
+      systemTokens.color.foreground.onInverse,
+      systemTokens.color.background.inverse,
+      4.5,
+    ],
   ])('%s meets WCAG contrast', (_name, foreground, background, threshold) => {
     expect(
       contrast(String(foreground), String(background)),
     ).toBeGreaterThanOrEqual(Number(threshold))
+  })
+})
+
+describe('brand palette', () => {
+  const stockTailwindHexes = [
+    '#2563eb', // blue-600
+    '#1d4ed8', // blue-700
+    '#f8fafc', // slate-50 (approx slate-25)
+    '#f1f5f9', // slate-100
+    '#e2e8f0', // slate-200
+    '#cbd5e1', // slate-300
+    '#94a3b8', // slate-400/500 approx
+    '#475569', // slate-500
+    '#1e293b', // slate-700
+    '#0f172a', // slate-900
+    '#b91c1c', // red-700
+    '#a16207', // amber-700
+    '#c2410c', // orange-700
+    '#15803d', // green-700
+  ]
+
+  it('never uses stock Tailwind default color hexes', () => {
+    const hexes = leafValues(referenceTokens.color).filter(
+      (value): value is string =>
+        typeof value === 'string' && value.startsWith('#'),
+    )
+
+    for (const hex of hexes) {
+      expect(
+        stockTailwindHexes,
+        `${hex} matches a stock Tailwind default`,
+      ).not.toContain(hex.toLowerCase())
+    }
+  })
+
+  it('keeps the brand primary action color readable on canvas and surface', () => {
+    expect(
+      contrast(
+        systemTokens.color.action.primary.foreground,
+        systemTokens.color.action.primary.background,
+      ),
+    ).toBeGreaterThanOrEqual(4.5)
+    expect(
+      contrast(
+        systemTokens.color.action.primary.background,
+        systemTokens.color.background.canvas,
+      ),
+    ).toBeGreaterThanOrEqual(4.5)
+    expect(
+      contrast(
+        systemTokens.color.action.primary.background,
+        systemTokens.color.background.surface,
+      ),
+    ).toBeGreaterThanOrEqual(4.5)
+  })
+
+  it('keeps feedback hues pairwise distinct from each other and from brand primary', () => {
+    const hues = {
+      brand: systemTokens.color.action.primary.background,
+      danger: systemTokens.color.feedback.danger.foreground,
+      warning: systemTokens.color.feedback.warning.foreground,
+      caution: systemTokens.color.feedback.caution.foreground,
+      success: systemTokens.color.feedback.success.foreground,
+    }
+    const entries = Object.entries(hues)
+    for (let i = 0; i < entries.length; i += 1) {
+      for (let j = i + 1; j < entries.length; j += 1) {
+        expect(
+          entries[i]![1],
+          `${entries[i]![0]} equals ${entries[j]![0]}`,
+        ).not.toBe(entries[j]![1])
+      }
+    }
   })
 })
 

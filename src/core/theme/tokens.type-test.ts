@@ -16,5 +16,5 @@ export type SystemTokensAreDeepReadonly = Expect<
   Equal<SystemTokens, ReadonlyDeep<SystemTokens>>
 >
 export type SystemLeafStaysLiteral = Expect<
-  Equal<SystemTokens['color']['background']['canvas'], '#f8fafc'>
+  Equal<SystemTokens['color']['background']['canvas'], '#f7f7fb'>
 >

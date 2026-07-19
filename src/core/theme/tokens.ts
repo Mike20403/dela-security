@@ -11,6 +11,7 @@ export const systemTokens = {
       surface: color.white,
       subtle: color.neutral[50],
       elevated: color.white,
+      inverse: color.neutral[900],
     },
     foreground: {
       default: color.neutral[900],
@@ -18,6 +19,7 @@ export const systemTokens = {
       subtle: color.neutral[700],
       inverse: color.white,
       disabled: color.neutral[300],
+      onInverse: color.white,
     },
     border: {
       default: color.neutral[200],
@@ -135,12 +137,15 @@ export const publicSystemCssVariables = {
   '--dela-sys-color-background-subtle': systemTokens.color.background.subtle,
   '--dela-sys-color-background-elevated':
     systemTokens.color.background.elevated,
+  '--dela-sys-color-background-inverse': systemTokens.color.background.inverse,
   '--dela-sys-color-foreground-default': systemTokens.color.foreground.default,
   '--dela-sys-color-foreground-muted': systemTokens.color.foreground.muted,
   '--dela-sys-color-foreground-subtle': systemTokens.color.foreground.subtle,
   '--dela-sys-color-foreground-inverse': systemTokens.color.foreground.inverse,
   '--dela-sys-color-foreground-disabled':
     systemTokens.color.foreground.disabled,
+  '--dela-sys-color-foreground-on-inverse':
+    systemTokens.color.foreground.onInverse,
   '--dela-sys-color-border-default': systemTokens.color.border.default,
   '--dela-sys-color-border-subtle': systemTokens.color.border.subtle,
   '--dela-sys-color-border-strong': systemTokens.color.border.strong,

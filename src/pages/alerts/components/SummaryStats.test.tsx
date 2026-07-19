@@ -24,8 +24,8 @@ describe('SummaryStats', () => {
     const value = within(tile).getByText('1')
     const label = within(tile).getByText('Total alerts')
 
-    expect(value.className).toMatch(/text-2xl|text-xl/)
-    expect(value.className).toMatch(/font-semibold|font-weight-semibold/)
+    expect(value.className).toMatch(/text-2xl/)
+    expect(value.className).toMatch(/font-bold/)
     expect(label.className).toMatch(/text-foreground-muted/)
     expect(label.className).toMatch(/text-xs|text-sm/)
   })

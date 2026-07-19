@@ -1,48 +1,50 @@
 :root {
-  --dela-sys-color-background-canvas: #f8fafc;
+  --dela-sys-color-background-canvas: #f7f7fb;
   --dela-sys-color-background-surface: #ffffff;
-  --dela-sys-color-background-subtle: #f1f5f9;
+  --dela-sys-color-background-subtle: #eeeef5;
   --dela-sys-color-background-elevated: #ffffff;
-  --dela-sys-color-foreground-default: #0f172a;
-  --dela-sys-color-foreground-muted: #475569;
-  --dela-sys-color-foreground-subtle: #1e293b;
+  --dela-sys-color-background-inverse: #131226;
+  --dela-sys-color-foreground-default: #131226;
+  --dela-sys-color-foreground-muted: #5a5674;
+  --dela-sys-color-foreground-subtle: #2a2740;
   --dela-sys-color-foreground-inverse: #ffffff;
-  --dela-sys-color-foreground-disabled: #94a3b8;
-  --dela-sys-color-border-default: #cbd5e1;
-  --dela-sys-color-border-subtle: #e2e8f0;
-  --dela-sys-color-border-strong: #94a3b8;
-  --dela-sys-color-border-focus: #2563eb;
-  --dela-sys-color-action-primary-background: #2563eb;
+  --dela-sys-color-foreground-disabled: #928fb0;
+  --dela-sys-color-foreground-on-inverse: #ffffff;
+  --dela-sys-color-border-default: #c3c2d6;
+  --dela-sys-color-border-subtle: #dcdce8;
+  --dela-sys-color-border-strong: #928fb0;
+  --dela-sys-color-border-focus: #4f3cc9;
+  --dela-sys-color-action-primary-background: #4f3cc9;
   --dela-sys-color-action-primary-foreground: #ffffff;
-  --dela-sys-color-action-primary-hover: #1d4ed8;
-  --dela-sys-color-action-primary-pressed: #1d4ed8;
-  --dela-sys-color-action-primary-disabled: #94a3b8;
+  --dela-sys-color-action-primary-hover: #3f2fa8;
+  --dela-sys-color-action-primary-pressed: #3f2fa8;
+  --dela-sys-color-action-primary-disabled: #928fb0;
   --dela-sys-color-action-secondary-background: #ffffff;
-  --dela-sys-color-action-secondary-foreground: #1e293b;
-  --dela-sys-color-action-secondary-hover: #f1f5f9;
-  --dela-sys-color-action-secondary-pressed: #e2e8f0;
-  --dela-sys-color-action-secondary-disabled: #94a3b8;
-  --dela-sys-color-feedback-info-foreground: #1d4ed8;
-  --dela-sys-color-feedback-info-background: #eff6ff;
-  --dela-sys-color-feedback-info-border: #1d4ed8;
-  --dela-sys-color-feedback-success-foreground: #15803d;
-  --dela-sys-color-feedback-success-background: #f0fdf4;
-  --dela-sys-color-feedback-success-border: #15803d;
-  --dela-sys-color-feedback-warning-foreground: #a16207;
-  --dela-sys-color-feedback-warning-background: #fffbeb;
-  --dela-sys-color-feedback-warning-border: #a16207;
-  --dela-sys-color-feedback-danger-foreground: #b91c1c;
-  --dela-sys-color-feedback-danger-background: #fef2f2;
-  --dela-sys-color-feedback-danger-border: #b91c1c;
-  --dela-sys-color-feedback-caution-foreground: #c2410c;
-  --dela-sys-color-feedback-caution-background: #fff7ed;
-  --dela-sys-color-feedback-caution-border: #c2410c;
-  --dela-sys-color-feedback-neutral-foreground: #475569;
-  --dela-sys-color-feedback-neutral-background: #f1f5f9;
-  --dela-sys-color-feedback-neutral-border: #94a3b8;
-  --dela-sys-color-selection-background: #eff6ff;
-  --dela-sys-color-selection-foreground: #1d4ed8;
-  --dela-sys-color-focus-ring: #2563eb;
+  --dela-sys-color-action-secondary-foreground: #2a2740;
+  --dela-sys-color-action-secondary-hover: #eeeef5;
+  --dela-sys-color-action-secondary-pressed: #dcdce8;
+  --dela-sys-color-action-secondary-disabled: #928fb0;
+  --dela-sys-color-feedback-info-foreground: #3f2fa8;
+  --dela-sys-color-feedback-info-background: #efedfc;
+  --dela-sys-color-feedback-info-border: #3f2fa8;
+  --dela-sys-color-feedback-success-foreground: #157a44;
+  --dela-sys-color-feedback-success-background: #eefaf1;
+  --dela-sys-color-feedback-success-border: #157a44;
+  --dela-sys-color-feedback-warning-foreground: #8f6a0a;
+  --dela-sys-color-feedback-warning-background: #fdf7e8;
+  --dela-sys-color-feedback-warning-border: #8f6a0a;
+  --dela-sys-color-feedback-danger-foreground: #a11d3a;
+  --dela-sys-color-feedback-danger-background: #fdf1f2;
+  --dela-sys-color-feedback-danger-border: #a11d3a;
+  --dela-sys-color-feedback-caution-foreground: #a3520f;
+  --dela-sys-color-feedback-caution-background: #fdf3ec;
+  --dela-sys-color-feedback-caution-border: #a3520f;
+  --dela-sys-color-feedback-neutral-foreground: #5a5674;
+  --dela-sys-color-feedback-neutral-background: #eeeef5;
+  --dela-sys-color-feedback-neutral-border: #928fb0;
+  --dela-sys-color-selection-background: #efedfc;
+  --dela-sys-color-selection-foreground: #3f2fa8;
+  --dela-sys-color-focus-ring: #4f3cc9;
   --dela-sys-color-focus-offset: #ffffff;
   --dela-sys-typography-body-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -84,10 +86,12 @@
   --color-background-surface: var(--dela-sys-color-background-surface);
   --color-background-subtle: var(--dela-sys-color-background-subtle);
   --color-background-elevated: var(--dela-sys-color-background-elevated);
+  --color-background-inverse: var(--dela-sys-color-background-inverse);
   --color-foreground-default: var(--dela-sys-color-foreground-default);
   --color-foreground-muted: var(--dela-sys-color-foreground-muted);
   --color-foreground-subtle: var(--dela-sys-color-foreground-subtle);
   --color-foreground-inverse: var(--dela-sys-color-foreground-inverse);
+  --color-foreground-on-inverse: var(--dela-sys-color-foreground-on-inverse);
   --color-border-default: var(--dela-sys-color-border-default);
   --color-border-subtle: var(--dela-sys-color-border-subtle);
   --color-action-primary: var(--dela-sys-color-action-primary-background);
@@ -190,5 +194,10 @@
     z-index: 1;
     background-color: var(--dela-sys-color-background-subtle);
     box-shadow: var(--dela-sys-elevation-surface);
+  }
+}
+@utility dela-table-header-subtle {
+  & > th {
+    background-color: var(--dela-sys-color-background-subtle);
   }
 }

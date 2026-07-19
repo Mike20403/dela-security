@@ -18,6 +18,14 @@ const makeAlert = (index: number): SecurityAlert => ({
 })
 
 describe('AlertsTable', () => {
+  it('gives the table header a background distinct from the surrounding card', () => {
+    render(<AlertsTable alerts={[makeAlert(1)]} onSelectAlert={vi.fn()} />)
+
+    const headerRow = document.querySelector('.ant-table-thead > tr')
+    expect(headerRow).not.toBeNull()
+    expect(headerRow?.className).toMatch(/dela-table-header-subtle/)
+  })
+
   it('renders exact columns and semantic human-readable tags', () => {
     render(<AlertsTable alerts={[makeAlert(1)]} onSelectAlert={vi.fn()} />)
 

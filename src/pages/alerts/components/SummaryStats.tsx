@@ -45,7 +45,7 @@ export function SummaryStats({ alerts }: SummaryStatsProps) {
           className={cn('bg-background-surface rounded-md p-sm', borderClass)}
         >
           <p className="text-foreground-muted m-0 text-xs">{label}</p>
-          <strong className="text-foreground-default font-semibold mt-xs block text-xl">
+          <strong className="text-foreground-default font-bold mt-xs block text-2xl">
             {summary[key]}
           </strong>
         </article>

@@ -5,13 +5,18 @@ import {
   useRouteError,
 } from 'react-router-dom'
 import { AppError, normalizeError } from '../core/errors/AppError'
+import { AppShell } from './AppShell'
 
 export function RootRedirect() {
   return <Navigate to="/alerts" replace />
 }
 
 export function RootLayout() {
-  return <Outlet />
+  return (
+    <AppShell>
+      <Outlet />
+    </AppShell>
+  )
 }
 
 export function NotFoundPage() {

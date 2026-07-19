@@ -51,7 +51,10 @@ describe('FilterPanel', () => {
   it('labels the toolbar with a visible section heading', () => {
     render(<TestFilterPanel />)
 
-    expect(screen.getByRole('heading', { name: 'Alert filters' })).toBeVisible()
+    const heading = screen.getByRole('heading', { name: 'Alert filters' })
+    expect(heading).toBeVisible()
+    expect(heading.className).toMatch(/text-sm|text-base/)
+    expect(heading.className).toMatch(/font-semibold|font-bold/)
   })
 
   it('reopens a controlled date range without crashing the calendar', async () => {
