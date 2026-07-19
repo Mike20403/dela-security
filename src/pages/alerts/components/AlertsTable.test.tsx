@@ -115,6 +115,81 @@ describe('AlertsTable', () => {
     expect(onSelectAlert).toHaveBeenLastCalledWith(second)
   })
 
+  it('moves roving focus to the next row on ArrowDown', async () => {
+    const user = userEvent.setup()
+    render(
+      <AlertsTable
+        alerts={[makeAlert(1), makeAlert(2), makeAlert(3)]}
+        onSelectAlert={vi.fn()}
+      />,
+    )
+    const firstRow = screen.getByRole('row', { name: 'Select alert Alert 1' })
+    const secondRow = screen.getByRole('row', { name: 'Select alert Alert 2' })
+
+    firstRow.focus()
+    await user.keyboard('{ArrowDown}')
+
+    expect(secondRow).toHaveFocus()
+    expect(secondRow).toHaveAttribute('tabindex', '0')
+    expect(firstRow).toHaveAttribute('tabindex', '-1')
+  })
+
+  it('moves roving focus to the previous row on ArrowUp', async () => {
+    const user = userEvent.setup()
+    render(
+      <AlertsTable
+        alerts={[makeAlert(1), makeAlert(2), makeAlert(3)]}
+        onSelectAlert={vi.fn()}
+      />,
+    )
+    const firstRow = screen.getByRole('row', { name: 'Select alert Alert 1' })
+    const secondRow = screen.getByRole('row', { name: 'Select alert Alert 2' })
+
+    secondRow.focus()
+    await user.keyboard('{ArrowUp}')
+
+    expect(firstRow).toHaveFocus()
+    expect(firstRow).toHaveAttribute('tabindex', '0')
+    expect(secondRow).toHaveAttribute('tabindex', '-1')
+  })
+
+  it('clamps ArrowUp at the first row and ArrowDown at the last row', async () => {
+    const user = userEvent.setup()
+    render(
+      <AlertsTable
+        alerts={[makeAlert(1), makeAlert(2)]}
+        onSelectAlert={vi.fn()}
+      />,
+    )
+    const firstRow = screen.getByRole('row', { name: 'Select alert Alert 1' })
+    const secondRow = screen.getByRole('row', { name: 'Select alert Alert 2' })
+
+    firstRow.focus()
+    await user.keyboard('{ArrowUp}')
+    expect(firstRow).toHaveFocus()
+
+    secondRow.focus()
+    await user.keyboard('{ArrowDown}')
+    expect(secondRow).toHaveFocus()
+  })
+
+  it('opens the drawer for the row focused via arrow navigation', async () => {
+    const user = userEvent.setup()
+    const onSelectAlert = vi.fn()
+    render(
+      <AlertsTable
+        alerts={[makeAlert(1), makeAlert(2)]}
+        onSelectAlert={onSelectAlert}
+      />,
+    )
+    const firstRow = screen.getByRole('row', { name: 'Select alert Alert 1' })
+
+    firstRow.focus()
+    await user.keyboard('{ArrowDown}{Enter}')
+
+    expect(onSelectAlert).toHaveBeenLastCalledWith(makeAlert(2))
+  })
+
   it('applies a monospace-style class to technical identifier values', () => {
     render(<AlertsTable alerts={[makeAlert(1)]} onSelectAlert={vi.fn()} />)
 

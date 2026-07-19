@@ -28,6 +28,14 @@ export function AlertsTable({ alerts, onSelectAlert }: AlertsTableProps) {
 
 function PaginatedAlertsTable({ alerts, onSelectAlert }: AlertsTableProps) {
   const [page, setPage] = useState(1)
+  const [focusedId, setFocusedId] = useState<string>(alerts[0]?.id ?? '')
+
+  const focusRow = (id: string) => {
+    setFocusedId(id)
+    document
+      .querySelector<HTMLElement>(`tr[data-row-key="${CSS.escape(id)}"]`)
+      ?.focus()
+  }
 
   const columns: TableColumnsType<SecurityAlert> = [
     {
@@ -141,9 +149,20 @@ function PaginatedAlertsTable({ alerts, onSelectAlert }: AlertsTableProps) {
             if (event.key === 'Enter' || event.key === ' ') {
               event.preventDefault()
               onSelectAlert(alert)
+              return
+            }
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+              event.preventDefault()
+              const index = alerts.findIndex(({ id }) => id === alert.id)
+              const nextIndex =
+                event.key === 'ArrowDown'
+                  ? Math.min(index + 1, alerts.length - 1)
+                  : Math.max(index - 1, 0)
+              const nextId = alerts[nextIndex]?.id
+              if (nextId) focusRow(nextId)
             }
           },
-          tabIndex: 0,
+          tabIndex: alert.id === focusedId ? 0 : -1,
           'aria-label': `Select alert ${alert.title}`,
           className: 'cursor-pointer',
         })}
