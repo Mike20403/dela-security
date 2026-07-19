@@ -1,6 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import dayjs from 'dayjs'
 import { useForm } from 'react-hook-form'
 import { describe, expect, it, vi } from 'vitest'
 import {
@@ -47,6 +48,33 @@ function TestFilterPanel({
 }
 
 describe('FilterPanel', () => {
+  it('reopens a controlled date range without crashing the calendar', async () => {
+    const user = userEvent.setup()
+    const onApply = vi.fn()
+    render(
+      <TestFilterPanel
+        onApply={onApply}
+        defaultValues={{
+          ...defaultAlertFilters,
+          dateRange: ['2026-07-10', '2026-07-18'],
+        }}
+      />,
+    )
+
+    await user.click(screen.getByRole('button', { name: 'Apply filters' }))
+    await waitFor(() => expect(onApply).toHaveBeenCalledOnce())
+    expect(
+      typeof (dayjs('2026-07-10') as unknown as { weekday?: unknown }).weekday,
+    ).toBe('function')
+
+    await user.click(
+      screen.getAllByLabelText('Detected date range')[0] as HTMLElement,
+    )
+    await waitFor(() =>
+      expect(document.querySelector('.ant-picker-panel')).toBeInTheDocument(),
+    )
+  })
+
   it('encodes responsive grid and no-overflow layout contracts', () => {
     render(<TestFilterPanel />)
 
