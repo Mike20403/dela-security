@@ -188,12 +188,39 @@
   background-color: var(--dela-sys-color-feedback-neutral-background);
 }
 @utility sticky-header-scope {
+  position: relative;
   & .ant-table-thead {
     position: sticky;
     top: 0;
     z-index: 1;
     background-color: var(--dela-sys-color-background-subtle);
     box-shadow: var(--dela-sys-elevation-surface);
+  }
+  &.ant-table-ping-right .ant-table-content::after,
+  & .ant-table-ping-right .ant-table-content::after {
+    content: '';
+    position: sticky;
+    top: 0;
+    right: 0;
+    display: block;
+    float: right;
+    width: 1px;
+    height: 100%;
+    margin-right: -1px;
+    box-shadow: -8px 0 8px -4px rgb(15 23 42 / 0.15);
+  }
+  &.ant-table-ping-left .ant-table-content::before,
+  & .ant-table-ping-left .ant-table-content::before {
+    content: '';
+    position: sticky;
+    top: 0;
+    left: 0;
+    display: block;
+    float: left;
+    width: 1px;
+    height: 100%;
+    margin-left: -1px;
+    box-shadow: 8px 0 8px -4px rgb(15 23 42 / 0.15);
   }
 }
 @utility dela-table-header-subtle {

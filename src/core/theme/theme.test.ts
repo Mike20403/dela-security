@@ -485,6 +485,13 @@ describe('CSS integration', () => {
     expect(readStyle('global.css')).not.toMatch(/--app-/)
   })
 
+  it('indicates additional scrollable table columns with a visible edge shadow', () => {
+    const tokenCss = readStyle('tokens.css')
+
+    expect(tokenCss).toMatch(/&\.ant-table-ping-right/)
+    expect(tokenCss).toMatch(/&\.ant-table-ping-left/)
+  })
+
   it('exposes alert severity/status classes as static CSS sourced from systemTokens feedback roles', () => {
     const tokenCss = readStyle('tokens.css')
 

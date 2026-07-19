@@ -72,6 +72,22 @@ describe('AlertsPage', () => {
     expect(screen.getAllByTestId('alert-skeleton-row')).toHaveLength(6)
   })
 
+  it('lets the table section scroll horizontally instead of squeezing columns', () => {
+    mockedUseAlerts.mockReturnValue({
+      isPending: false,
+      isError: false,
+      data: mockAlerts,
+      dataUpdatedAt: Date.parse('2026-07-19T10:00:00Z'),
+      refetch: vi.fn(),
+    } as unknown as ReturnType<typeof useAlerts>)
+    render(<AlertsPage />)
+
+    const table = screen.getByRole('table', { name: 'Security alerts' })
+    const scrollSection = table.closest('section')
+
+    expect(scrollSection?.className).toContain('overflow-x-auto')
+  })
+
   it('shows safe error feedback and retries', async () => {
     const refetch = vi.fn()
     mockedUseAlerts.mockReturnValue({
